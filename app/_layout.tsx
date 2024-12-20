@@ -42,12 +42,12 @@ export default function RootLayout() {
           options={{ title: "Home", headerShown: false }}
         />
         <Stack.Screen
-          name="create_profile"
+          name="CreateProfile"
           options={{ title: "Create Profile", headerShown: false }}
         />
         <Stack.Screen
-          name="user_home"
-          options={{ title: "Create Profile", headerShown: false }}
+          name="UserHome"
+          options={{ title: "User Home", headerShown: false }}
         />
 
         <Stack.Screen name="+not-found" />
