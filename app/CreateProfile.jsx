@@ -21,6 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 // icons
 import BackButton from "./icons/BackButton";
 import DefaultUser from "./icons/DefaultUser";
+import XButton from "./icons/XButton";
 
 const CreateProfile = () => {
   const [image, setImage] = useState(null);
@@ -39,7 +40,7 @@ const CreateProfile = () => {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "image",
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -54,6 +55,10 @@ const CreateProfile = () => {
     console.log({ username, image });
   };
 
+  const removeImg = () => {
+    setImage(null);
+  };
+
   return (
     <View style={styles.main}>
       <Link href="/" style={styles.back_button} asChild>
@@ -63,12 +68,24 @@ const CreateProfile = () => {
       </Link>
       <Text style={styles.title}>Create Your Profile</Text>
 
-      <View style={styles.center_circle}>
-        <Image
-          source={require("../assets/images/user.png")}
-          style={styles.user_default}
-        />
+      <View style={styles.image_container}>
+        {image ? (
+          <Pressable onPress={removeImg} style={styles.remove_img_btn}>
+            <XButton width={15} height={15} color={"black"} />
+          </Pressable>
+        ) : null}
+        <View style={styles.center_circle}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.profileImage} />
+          ) : (
+            <Image
+              source={require("../assets/images/user.png")}
+              style={styles.user_default}
+            />
+          )}
+        </View>
       </View>
+
       <Pressable
         title="Add picture"
         style={({ pressed }) => [
@@ -123,6 +140,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
   },
   title: {
     fontSize: 30,
@@ -172,6 +190,41 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 16,
     fontWeight: "bold",
+  },
+
+  // imageContainer: {
+  //   width: "100%",
+  //   height: "100%",
+  //   borderRadius: vw("25%"),
+  //   overflow: "hidden",
+  // },
+
+  profileImage: {
+    width: vw("49%"),
+    height: vw("49%"),
+    borderRadius: vw("24.5%"),
+    resizeMode: "cover", // This ensures the image covers the entire container
+  },
+
+  remove_img_btn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "lightgray",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: 20,
+    right: 20,
+  },
+
+  image_container: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+    verticalAlign: "center",
+    width: vw("60%"),
+    height: vw("60%"),
   },
 });
 

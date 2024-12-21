@@ -58,11 +58,19 @@ const App = () => {
             source={require("../assets/images/google.png")}
             style={styles.google_logo}
           />
-          <Text style={styles.center_text}>Continue with Google</Text>
+          <Link href="/CreateProfile" asChild>
+            <Pressable>
+              <Text style={styles.center_text}>Continue with Google</Text>
+            </Pressable>
+          </Link>
         </View>
         <View style={styles.login_item}>
           <AppleLogo width={27} height={27} />
-          <Text style={styles.center_text}>Continue with Apple</Text>
+          <Link href="/CreateProfile" asChild>
+            <Pressable>
+              <Text style={styles.center_text}>Continue with Apple</Text>
+            </Pressable>
+          </Link>
         </View>
       </LinearGradient>
     </View>
