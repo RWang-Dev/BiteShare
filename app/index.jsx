@@ -22,6 +22,12 @@ import InstagramLogo from "./icons/InstagramLogo";
 import AppleLogo from "./icons/AppleLogo";
 
 const App = () => {
+  const authenticateUser = (method) => {
+    console.log("TODO:: Implement OAuth authentication");
+    console.log("Logging in user with: ", method);
+    return;
+  };
+
   return (
     <View style={styles.main}>
       <LinearGradient
@@ -30,7 +36,7 @@ const App = () => {
       >
         <Text style={styles.title}>BiteShare</Text>
         <View style={styles.center_circle}>
-          <Cutlery width={vw("55%")} height={vw("55%")} />
+          <Cutlery width={vw("55%")} height={vw("55%")} color={"#D26E22"} />
         </View>
         <Text style={styles.header}>The Food App</Text>
         <Text style={styles.description}>
@@ -45,7 +51,7 @@ const App = () => {
           >
             <InstagramLogo width={30} height={30} />
             <Link href="/CreateProfile" asChild>
-              <Pressable>
+              <Pressable onPress={() => authenticateUser("Instagram")}>
                 <Text style={styles.instagram_text}>
                   Sign in with Instagram
                 </Text>
@@ -59,7 +65,7 @@ const App = () => {
             style={styles.google_logo}
           />
           <Link href="/CreateProfile" asChild>
-            <Pressable>
+            <Pressable onPress={() => authenticateUser("Google")}>
               <Text style={styles.center_text}>Continue with Google</Text>
             </Pressable>
           </Link>
@@ -67,7 +73,7 @@ const App = () => {
         <View style={styles.login_item}>
           <AppleLogo width={27} height={27} />
           <Link href="/CreateProfile" asChild>
-            <Pressable>
+            <Pressable onPress={() => authenticateUser("Apple")}>
               <Text style={styles.center_text}>Continue with Apple</Text>
             </Pressable>
           </Link>

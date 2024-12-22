@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const UserHome = () => {
+const MapPage = () => {
   return (
     <View>
-      <Text>User Home</Text>
+      <Text>MapPage</Text>
     </View>
   );
 };
 
-export default UserHome;
+export default MapPage;

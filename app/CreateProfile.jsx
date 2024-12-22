@@ -14,10 +14,10 @@ import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
-
+import { useNavigation } from "expo-router";
 // icons
 import BackButton from "./icons/BackButton";
 import DefaultUser from "./icons/DefaultUser";
@@ -26,10 +26,11 @@ import XButton from "./icons/XButton";
 const CreateProfile = () => {
   const [image, setImage] = useState(null);
   const [username, setUsername] = useState("");
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    console.log("Username: ", username);
-  }, [username]);
+  // useEffect(() => {
+  //   console.log("Username: ", username);
+  // }, [username]);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -51,8 +52,26 @@ const CreateProfile = () => {
     }
   };
 
+  const validateUsername = (username) => {
+    if (username.length < 3) {
+      console.log("Username is too short");
+      return false;
+    }
+
+    console.log("TODO:: Validate username by checking in database");
+    console.log("Username is valid!");
+    return true;
+  };
   const handleSubmit = () => {
-    console.log({ username, image });
+    if (validateUsername(username)) {
+      console.log("Submitted profile for the following user: ");
+      console.log({ username, image });
+    } else {
+      return;
+    }
+    console.log("TODO:: Add user and profile image to the database");
+    navigation.navigate("MainLayout");
+    return;
   };
 
   const removeImg = () => {
@@ -63,7 +82,7 @@ const CreateProfile = () => {
     <View style={styles.main}>
       <Link href="/" style={styles.back_button} asChild>
         <Pressable>
-          <BackButton width={vw("7%")} height={vh("7%")} />
+          <BackButton width={vw("7%")} height={vh("7%")} color={"#D26E22"} />
         </Pressable>
       </Link>
       <Text style={styles.title}>Create Your Profile</Text>
@@ -106,7 +125,14 @@ const CreateProfile = () => {
         <View style={styles.username_underline} />
       </View>
 
-      <Pressable title="Submit" style={styles.submit_button}>
+      <Pressable
+        title="Submit"
+        style={({ pressed }) => [
+          styles.submit_button,
+          { backgroundColor: pressed ? "#B6632D" : "#DB7634" }, // Change background color when pressed
+        ]}
+        onPress={handleSubmit}
+      >
         <Text style={styles.submit_button_txt}>Continue</Text>
       </Pressable>
     </View>
