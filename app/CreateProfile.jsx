@@ -63,13 +63,13 @@ const CreateProfile = () => {
     return true;
   };
   const handleSubmit = () => {
-    if (validateUsername(username)) {
-      console.log("Submitted profile for the following user: ");
-      console.log({ username, image });
-    } else {
-      return;
-    }
-    console.log("TODO:: Add user and profile image to the database");
+    // if (validateUsername(username)) {
+    //   console.log("Submitted profile for the following user: ");
+    //   console.log({ username, image });
+    // } else {
+    //   return;
+    // }
+    // console.log("TODO:: Add user and profile image to the database");
     navigation.navigate("MainLayout");
     return;
   };

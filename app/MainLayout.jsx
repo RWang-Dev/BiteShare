@@ -22,15 +22,30 @@ const MainLayout = () => {
   const [pageTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
 
   return (
-    <View>
-      <Text>Main Layout</Text>
-      <Footer></Footer>
+    <View style={styles.main}>
+      <Text>Main Layout Here</Text>
+      <View style={styles.footer}>
+        <Footer />
+      </View>
     </View>
   );
 };
 
-// const styles = StyleSheet.create({
-//   footer,
-// });
+const styles = StyleSheet.create({
+  main: {
+    // width: vw("100%"),
+    // height: vh("100%"),
+    flex: 1,
+    backgroundColor: "green",
+    position: "relative",
+    // display: "flex",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+});
 
 export default MainLayout;

@@ -22,7 +22,7 @@ import Profile from "../icons/Profile";
 
 const Footer = () => {
   return (
-    <View>
+    <View style={styles.footer_container}>
       <Coupon width={30} height={30} color={"black"} />
       <Location width={30} height={30} color={"black"} />
       <Profile width={30} height={30} color={"black"} />
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 20,
+    gap: vw("25%"),
   },
 });
 
