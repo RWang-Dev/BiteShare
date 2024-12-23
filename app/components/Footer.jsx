@@ -20,21 +20,41 @@ import Coupon from "../icons/Coupon";
 import Location from "../icons/Location";
 import Profile from "../icons/Profile";
 
-const Footer = () => {
+const Footer = (props) => {
   return (
     <View style={styles.footer_container}>
-      <Coupon width={30} height={30} color={"black"} />
-      <Location width={30} height={30} color={"black"} />
-      <Profile width={30} height={30} color={"black"} />
+      <Pressable onPress={() => props.setTab("Coupon")}>
+        <Coupon
+          width={35}
+          height={35}
+          color={props.tab == "Coupon" ? "#ff7b00" : "gray"}
+        />
+      </Pressable>
+
+      <Pressable onPress={() => props.setTab("Map")}>
+        <Location
+          width={35}
+          height={35}
+          color={props.tab == "Map" ? "#ff7b00" : "gray"}
+        />
+      </Pressable>
+
+      <Pressable onPress={() => props.setTab("Profile")}>
+        <Profile
+          width={35}
+          height={35}
+          color={props.tab == "Profile" ? "#ff7b00" : "gray"}
+        />
+      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   footer_container: {
-    backgroundColor: "lightgray",
+    backgroundColor: "white",
     width: vw("100%"),
-    height: 100,
+    height: 75,
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",

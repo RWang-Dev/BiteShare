@@ -1,12 +1,34 @@
-import { View, Text } from "react-native";
-import React from "react";
+import React, { userState, useEffect } from "react";
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  widthPercentageToDP as vw,
+  heightPercentageToDP as vh,
+} from "react-native-responsive-screen";
+import { Link } from "expo-router";
+import Svg, { Path } from "react-native-svg";
 
-const ProfilePage = () => {
+const UserProfile = () => {
   return (
-    <View>
-      <Text>ProfilePage</Text>
+    <View style={styles.main}>
+      <Text>UserProfile</Text>
     </View>
   );
 };
 
-export default ProfilePage;
+const styles = StyleSheet.create({
+  main: {
+    backgroundColor: "blue",
+    width: vw("100%"),
+    height: vh("100%") - 75,
+  },
+});
+
+export default UserProfile;

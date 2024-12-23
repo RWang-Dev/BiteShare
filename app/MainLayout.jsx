@@ -17,15 +17,37 @@ import Svg, { Path } from "react-native-svg";
 
 // Components
 import Footer from "./components/Footer";
+import Coupons from "./components/Coupons";
+import CouponMap from "./components/CouponMap";
+import UserProfile from "./components/UserProfile";
 
 const MainLayout = () => {
   const [pageTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
 
+  const TABS = {
+    COUPON: "Coupon",
+    MAP: "Map",
+    PROFILE: "Profile",
+  };
+
+  const renderContent = () => {
+    switch (pageTab) {
+      case TABS.COUPON:
+        return <Coupons />;
+      case TABS.MAP:
+        return <CouponMap />;
+      case TABS.PROFILE:
+        return <UserProfile />;
+      default:
+        return null; // Optional fallback
+    }
+  };
+
   return (
     <View style={styles.main}>
-      <Text>Main Layout Here</Text>
+      <View style={styles.active_page}>{renderContent()}</View>
       <View style={styles.footer}>
-        <Footer />
+        <Footer tab={pageTab} setTab={setTab} />
       </View>
     </View>
   );
@@ -36,9 +58,15 @@ const styles = StyleSheet.create({
     // width: vw("100%"),
     // height: vh("100%"),
     flex: 1,
-    backgroundColor: "green",
+    backgroundColor: "gray",
     position: "relative",
     // display: "flex",
+  },
+  active_page: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
   },
   footer: {
     position: "absolute",
