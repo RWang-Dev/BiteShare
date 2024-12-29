@@ -17,7 +17,7 @@ import Svg, { Path } from "react-native-svg";
 
 // Components
 import Footer from "./components/Footer";
-import Coupons from "./components/Coupons";
+import CouponFeed from "./components/CouponFeed";
 import CouponMap from "./components/CouponMap";
 import UserProfile from "./components/UserProfile";
 
@@ -33,7 +33,7 @@ const MainLayout = () => {
   const renderContent = () => {
     switch (pageTab) {
       case TABS.COUPON:
-        return <Coupons />;
+        return <CouponFeed />;
       case TABS.MAP:
         return <CouponMap />;
       case TABS.PROFILE:
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     // width: vw("100%"),
     // height: vh("100%"),
     flex: 1,
-    backgroundColor: "gray",
+    backgroundColor: "white",
     position: "relative",
     // display: "flex",
   },

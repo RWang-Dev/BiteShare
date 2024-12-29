@@ -23,7 +23,14 @@ import Profile from "../icons/Profile";
 const Footer = (props) => {
   return (
     <View style={styles.footer_container}>
-      <Pressable onPress={() => props.setTab("Coupon")}>
+      <Pressable
+        style={styles.footer_button}
+        // style={({ pressed }) => [
+        //   styles.footer_button,
+        //   { backgroundColor: pressed ? "#5C5C5C7D" : "white" }, // Change background color when pressed
+        // ]}
+        onPress={() => props.setTab("Coupon")}
+      >
         <Coupon
           width={35}
           height={35}
@@ -31,7 +38,14 @@ const Footer = (props) => {
         />
       </Pressable>
 
-      <Pressable onPress={() => props.setTab("Map")}>
+      <Pressable
+        style={styles.footer_button}
+        // style={({ pressed }) => [
+        //   styles.footer_button,
+        //   { backgroundColor: pressed ? "#5C5C5C7D" : "white" }, // Change background color when pressed
+        // ]}
+        onPress={() => props.setTab("Map")}
+      >
         <Location
           width={35}
           height={35}
@@ -39,7 +53,14 @@ const Footer = (props) => {
         />
       </Pressable>
 
-      <Pressable onPress={() => props.setTab("Profile")}>
+      <Pressable
+        style={styles.footer_button}
+        // style={({ pressed }) => [
+        //   styles.footer_button,
+        //   { backgroundColor: pressed ? "#5C5C5C7D" : "white" }, // Change background color when pressed
+        // ]}
+        onPress={() => props.setTab("Profile")}
+      >
         <Profile
           width={35}
           height={35}
@@ -54,12 +75,22 @@ const styles = StyleSheet.create({
   footer_container: {
     backgroundColor: "white",
     width: vw("100%"),
-    height: 75,
+    height: 65,
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: vw("25%"),
+    gap: vw("15%"),
+  },
+
+  footer_button: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
