@@ -46,6 +46,7 @@ const MainLayout = () => {
   return (
     <View style={styles.main}>
       <View style={styles.active_page}>{renderContent()}</View>
+      {/* <CouponMap /> */}
       <View style={styles.footer}>
         <Footer tab={pageTab} setTab={setTab} />
       </View>
@@ -63,10 +64,11 @@ const styles = StyleSheet.create({
     // display: "flex",
   },
   active_page: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
+    // position: "absolute",
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    flex: 1,
   },
   footer: {
     position: "absolute",
