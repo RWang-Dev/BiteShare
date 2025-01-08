@@ -1,19 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
-import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import MagnifyingGlass from "../icons/MagnifyingGlass";
+import React, { useState, useEffect, useRef } from "react"; // Correct hooks import
+import {
+  View,
+  Alert,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  FlatList,
+} from "react-native";
 import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
+import MapView, { Marker } from "react-native-maps";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import * as Location from "expo-location";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
-import LocationDot from "../icons/LocationDot";
+import MagnifyingGlass from "../icons/MagnifyingGlass";
+
 const GOOGLE_MAPS_API_KEY = "AIzaSyAYOoMzREk0iSjhjIgzVTlPB5fWURSY4Fg";
 
-export default function CouponMap() {
-  const [selectedMarker, setSelectedMarker] = useState(null);
+const CouponMap = () => {
   const [location, setLocation] = useState(null);
   const [region, setRegion] = useState({
     latitude: 37.78825,
@@ -27,7 +35,6 @@ export default function CouponMap() {
   const mapRef = useRef(null);
 
   const getLocation = async () => {
-    console.log("getting location");
     let { status } = await Location.requestForegroundPermissionsAsync(); // Ensure correct permissions API
     if (status !== "granted") {
       Alert.alert(
@@ -36,7 +43,6 @@ export default function CouponMap() {
       );
       return;
     }
-    console.log("pass");
 
     let currentLocation = await Location.getCurrentPositionAsync({});
     setLocation(currentLocation);
@@ -46,15 +52,6 @@ export default function CouponMap() {
       longitude: currentLocation.coords.longitude,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
-    });
-  };
-
-  const handleRegionChange = (newRegion) => {
-    // Adjust zoom sensitivity by reducing deltas more significantly
-    setRegion({
-      ...newRegion,
-      latitudeDelta: Math.max(newRegion.latitudeDelta * 0.8, 0.002), // Fine-tune zoom sensitivity
-      longitudeDelta: Math.max(newRegion.longitudeDelta * 0.8, 0.002),
     });
   };
 
@@ -88,24 +85,34 @@ export default function CouponMap() {
     getLocation();
   }, []);
 
-  useEffect(() => {
-    if (location) {
-      fetchNearbyRestaurants();
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (markers) {
-      console.log(markers);
-    }
-  }, [markers]);
-
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.autoCompleteContainer}>
+    <View style={styles.container}>
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          region={region}
+          onRegionChangeComplete={setRegion}
+          onPress={() => console.log("Pressing map")}
+          pointerEvents="none"
+        >
+          {location ? (
+            <Marker
+              coordinate={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              }}
+              title="You are here"
+              description="This is your current location."
+              pinColor="blue"
+            />
+          ) : null}
+        </MapView>
+      </View>
+
+      <View style={styles.searchContainer} listViewDisplayed={false}>
         <GooglePlacesAutocomplete
-          placeholder="Search"
-          fetchDetails={true}
+          placeholder="Search for places..."
           onPress={(data, details = null) => {
             console.log("Pressing autofill");
             if (details) {
@@ -118,8 +125,11 @@ export default function CouponMap() {
               fetchNearbyRestaurants(lat, lng);
             }
           }}
-          query={{ key: GOOGLE_MAPS_API_KEY, language: "en" }}
-          onFail={(error) => console.log(error)}
+          query={{
+            key: GOOGLE_MAPS_API_KEY,
+            language: "en",
+          }}
+          fetchDetails={true}
           styles={{
             container: {
               position: "absolute",
@@ -160,62 +170,34 @@ export default function CouponMap() {
               elevation: 10, // This is important for Android
             },
           }}
+          enablePoweredByContainer={false}
+        />
+        <View
+          style={styles.searchBarIconContainer}
+          onPress={() => console.log("pressing search container")}
         >
-          <View
-            style={styles.searchBarIconContainer}
-            onPress={() => console.log("pressing search container")}
-          >
-            <MagnifyingGlass height={25} width={25} color={"white"} />
-          </View>
-        </GooglePlacesAutocomplete>
+          <MagnifyingGlass height={25} width={25} color={"white"} />
+        </View>
       </View>
-
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        region={region}
-        zoomEnabled={true} // Ensure zoom gestures are enabled
-        scrollEnabled={true} // Enable panning
-        pitchEnabled={true} // Enable 3D tilt gestures
-        rotateEnabled={true}
-        // onRegionChange={(newRegion) => {
-        //   setRegion(newRegion); // Dynamically update the region during pinch-and-zoom
-        // }}
-        // onRegionChange={handleRegionChange}
-      >
-        {markers
-          ? markers.map((marker) => (
-              <Marker
-                key={marker.id}
-                coordinate={{
-                  latitude: marker.coordinate.latitude,
-                  longitude: marker.coordinate.longitude,
-                }}
-                title={marker.name}
-                description={marker.description}
-                pinColor="blue"
-              ></Marker>
-            ))
-          : null}
-
-        {/* <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title="You are here"
-          description="This is your current location."
-          pinColor="blue"
-        ></Marker> */}
-      </MapView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  markerContainer: {
-    alignItems: "center", // Center the SVG horizontally
-    justifyContent: "center", // Center the SVG vertically
+  container: {
+    flex: 1,
+    zIndex: 0,
+    elevation: 0, // This is important for Android
+  },
+  searchContainer: {
+    position: "absolute",
+    top: vh("5%"),
+    left: "7.5%",
+    width: "85%",
+    height: 300,
+    // backgroundColor: "gray",
+    zIndex: 15,
+    elevation: 15, // This is important for Android
   },
   searchBarIconContainer: {
     position: "absolute",
@@ -230,18 +212,17 @@ const styles = StyleSheet.create({
     zIndex: 100,
     elevation: 100, // This is important for Android
   },
-  autoCompleteContainer: {
-    position: "absolute",
-    top: vh("5%"),
-    left: "7.5%",
-    width: "85%",
-    height: 300,
-    // backgroundColor: "gray",
-    zIndex: 15,
-    elevation: 15, // This is important for Android
-  },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    // position: "absolute",
+    width: vw("100%"),
+    height: vh("100%"),
     zIndex: 0,
+    elevation: 0, // This is important for Android
+  },
+  mapContainer: {
+    zIndex: 0,
+    elevation: 0, // This is important for Android
   },
 });
+
+export default CouponMap;
