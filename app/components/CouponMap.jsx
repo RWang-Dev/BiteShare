@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MagnifyingGlass from "../icons/MagnifyingGlass";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
@@ -25,6 +28,25 @@ export default function CouponMap() {
   const [markers, setMarkers] = useState([]);
 
   const mapRef = useRef(null);
+  const bottomSheetRef = useRef(null);
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  useEffect(() => {
+    if (location) {
+      fetchNearbyRestaurants();
+      // console.log("LOCATION: ", location);
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+      console.log("REGION: ", region);
+    }
+  }, [location]);
 
   const getLocation = async () => {
     console.log("getting location");
@@ -41,12 +63,12 @@ export default function CouponMap() {
     let currentLocation = await Location.getCurrentPositionAsync({});
     setLocation(currentLocation);
 
-    setRegion({
-      latitude: currentLocation.coords.latitude,
-      longitude: currentLocation.coords.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
+    // setRegion({
+    //   latitude: currentLocation.coords.latitude,
+    //   longitude: currentLocation.coords.longitude,
+    //   latitudeDelta: 0.0922,
+    //   longitudeDelta: 0.0421,
+    // });
   };
 
   const handleRegionChange = (newRegion) => {
@@ -84,131 +106,146 @@ export default function CouponMap() {
     }
   };
 
-  useEffect(() => {
-    getLocation();
-  }, []);
+  const renderBottomSheetContent = () => (
+    <View style={styles.bottomSheetContent}>
+      {selectedMarker ? (
+        <>
+          <Text style={styles.markerTitle}>{selectedMarker.name}</Text>
+          <Text style={styles.markerDescription}>
+            {selectedMarker.description}
+          </Text>
+        </>
+      ) : (
+        <Text style={styles.noMarkerSelected}>
+          Select a marker to view details
+        </Text>
+      )}
+    </View>
+  );
 
-  useEffect(() => {
-    if (location) {
-      fetchNearbyRestaurants();
-    }
-  }, [location]);
+  const handleMarkerPress = (marker) => {
+    setSelectedMarker(marker);
+    bottomSheetRef.current?.snapToIndex(0); // Use snapToIndex
+  };
 
-  useEffect(() => {
-    if (markers) {
-      console.log(markers);
-    }
-  }, [markers]);
+  // useEffect(() => {
+  //   if (markers) {
+  //     console.log(markers);
+  //   }
+  // }, [markers]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.autoCompleteContainer}>
-        <GooglePlacesAutocomplete
-          placeholder="Search"
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            console.log("Pressing autofill");
-            if (details) {
-              const { lat, lng } = details.geometry.location;
-              setRegion((prev) => ({
-                ...prev,
-                latitude: lat,
-                longitude: lng,
-              }));
-              fetchNearbyRestaurants(lat, lng);
-            }
-          }}
-          query={{ key: GOOGLE_MAPS_API_KEY, language: "en" }}
-          onFail={(error) => console.log(error)}
-          styles={{
-            container: {
-              position: "absolute",
-              top: 0,
-              flex: 0,
-              width: "100%",
-              zIndex: 10,
-              elevation: 10, // This is important for Android
-            },
-            textInput: {
-              // position: "absolute",
-              backgroundColor: "white",
-              borderWidth: 3,
-              borderColor: "#ff7b00",
-              borderRadius: 22.5,
-              height: 45,
-              padding: 10,
-              paddingLeft: 50,
-              fontSize: 16,
-              zIndex: 10,
-              elevation: 10, // This is important for Android
-            },
-            listView: {
-              // position: "absolute",
-              backgroundColor: "white",
-              borderRadius: 5,
-              marginTop: 5,
-              zIndex: 10,
-              elevation: 10, // This is important for Android
-            },
-            row: {
-              // position: "absolute",
-              backgroundColor: "white",
-              padding: 13,
-              height: 44,
-              flexDirection: "row",
-              zIndex: 10,
-              elevation: 10, // This is important for Android
-            },
-          }}
-        >
-          <View
-            style={styles.searchBarIconContainer}
-            onPress={() => console.log("pressing search container")}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        <View style={styles.autoCompleteContainer}>
+          <GooglePlacesAutocomplete
+            placeholder="Search"
+            fetchDetails={true}
+            onPress={(data, details = null) => {
+              console.log("Pressing autofill");
+              if (details) {
+                const { lat, lng } = details.geometry.location;
+                setRegion((prev) => ({
+                  ...prev,
+                  latitude: lat,
+                  longitude: lng,
+                }));
+                fetchNearbyRestaurants(lat, lng);
+              }
+            }}
+            query={{ key: GOOGLE_MAPS_API_KEY, language: "en" }}
+            onFail={(error) => console.log(error)}
+            styles={{
+              container: {
+                position: "absolute",
+                top: 0,
+                flex: 0,
+                width: "100%",
+                zIndex: 10,
+                elevation: 10, // This is important for Android
+              },
+              textInput: {
+                // position: "absolute",
+                backgroundColor: "white",
+                borderWidth: 3,
+                borderColor: "#ff7b00",
+                borderRadius: 22.5,
+                height: 45,
+                padding: 10,
+                paddingLeft: 50,
+                fontSize: 16,
+                zIndex: 10,
+                elevation: 10, // This is important for Android
+              },
+              listView: {
+                // position: "absolute",
+                backgroundColor: "white",
+                borderRadius: 5,
+                marginTop: 5,
+                zIndex: 10,
+                elevation: 10, // This is important for Android
+              },
+              row: {
+                // position: "absolute",
+                backgroundColor: "white",
+                padding: 13,
+                height: 44,
+                flexDirection: "row",
+                zIndex: 10,
+                elevation: 10, // This is important for Android
+              },
+            }}
           >
-            <MagnifyingGlass height={25} width={25} color={"white"} />
-          </View>
-        </GooglePlacesAutocomplete>
+            <View
+              style={styles.searchBarIconContainer}
+              onPress={() => console.log("pressing search container")}
+            >
+              <MagnifyingGlass height={25} width={25} color={"white"} />
+            </View>
+          </GooglePlacesAutocomplete>
+        </View>
+
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          region={region}
+          zoomEnabled={true} // Ensure zoom gestures are enabled
+          scrollEnabled={true} // Enable panning
+          pitchEnabled={true} // Enable 3D tilt gestures
+          rotateEnabled={true}
+          // onRegionChange={(newRegion) => {
+          //   setRegion(newRegion); // Dynamically update the region during pinch-and-zoom
+          // }}
+          // onRegionChange={handleRegionChange}
+        >
+          {markers
+            ? markers.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  coordinate={{
+                    latitude: marker.coordinate.latitude,
+                    longitude: marker.coordinate.longitude,
+                  }}
+                  title={marker.name}
+                  description={marker.description}
+                  pinColor="red"
+                  onPress={() => handleMarkerPress(marker)}
+                ></Marker>
+              ))
+            : null}
+        </MapView>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={0} // Default position (1 = closed)
+          snapPoints={["50%", "25%"]} // Custom heights
+          enablePanDownToClose={true} // Enable swipe down to close
+          style={{ zIndex: 10, elevation: 10 }}
+        >
+          {renderBottomSheetContent()}
+        </BottomSheet>
       </View>
-
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        region={region}
-        zoomEnabled={true} // Ensure zoom gestures are enabled
-        scrollEnabled={true} // Enable panning
-        pitchEnabled={true} // Enable 3D tilt gestures
-        rotateEnabled={true}
-        // onRegionChange={(newRegion) => {
-        //   setRegion(newRegion); // Dynamically update the region during pinch-and-zoom
-        // }}
-        // onRegionChange={handleRegionChange}
-      >
-        {markers
-          ? markers.map((marker) => (
-              <Marker
-                key={marker.id}
-                coordinate={{
-                  latitude: marker.coordinate.latitude,
-                  longitude: marker.coordinate.longitude,
-                }}
-                title={marker.name}
-                description={marker.description}
-                pinColor="blue"
-              ></Marker>
-            ))
-          : null}
-
-        {/* <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title="You are here"
-          description="This is your current location."
-          pinColor="blue"
-        ></Marker> */}
-      </MapView>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
