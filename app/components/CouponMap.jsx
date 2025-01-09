@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MagnifyingGlass from "../icons/MagnifyingGlass";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import {
@@ -13,7 +13,7 @@ import {
 import * as Location from "expo-location";
 
 import LocationDot from "../icons/LocationDot";
-const GOOGLE_MAPS_API_KEY = "AIzaSyAYOoMzREk0iSjhjIgzVTlPB5fWURSY4Fg";
+import GOOGLE_MAPS_API_KEY from "../Keys";
 
 export default function CouponMap() {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -29,6 +29,7 @@ export default function CouponMap() {
 
   const mapRef = useRef(null);
   const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
 
   useEffect(() => {
     getLocation();
@@ -36,17 +37,50 @@ export default function CouponMap() {
 
   useEffect(() => {
     if (location) {
-      fetchNearbyRestaurants();
-      // console.log("LOCATION: ", location);
+      fetchNearbyRestaurants(
+        location.coords.latitude,
+        location.coords.longitude
+      );
       setRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
-      console.log("REGION: ", region);
     }
   }, [location]);
+
+  useEffect(() => {
+    if (mapRef.current && location) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        1000 // animation duration in ms
+      );
+    }
+  }, [location]);
+
+  // useEffect(() => {
+  //   if (markers) {
+  //     console.log("Markers Updated: ", markers);
+  //   }
+  // }, [markers]);
+
+  useEffect(() => {
+    console.log("REGION UPDATED: ", region);
+    console.log("MAPREF: ", mapRef);
+    if (region && mapRef.current) {
+      console.log("shifting region view");
+      mapRef.current.animateToRegion(
+        region,
+        1000 // animation duration in ms
+      );
+    }
+  }, [region]);
 
   const getLocation = async () => {
     console.log("getting location");
@@ -58,33 +92,18 @@ export default function CouponMap() {
       );
       return;
     }
-    console.log("pass");
 
-    let currentLocation = await Location.getCurrentPositionAsync({});
-    setLocation(currentLocation);
-
-    // setRegion({
-    //   latitude: currentLocation.coords.latitude,
-    //   longitude: currentLocation.coords.longitude,
-    //   latitudeDelta: 0.0922,
-    //   longitudeDelta: 0.0421,
-    // });
-  };
-
-  const handleRegionChange = (newRegion) => {
-    // Adjust zoom sensitivity by reducing deltas more significantly
-    setRegion({
-      ...newRegion,
-      latitudeDelta: Math.max(newRegion.latitudeDelta * 0.8, 0.002), // Fine-tune zoom sensitivity
-      longitudeDelta: Math.max(newRegion.longitudeDelta * 0.8, 0.002),
+    let currentLocation = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
     });
+    setLocation(currentLocation);
   };
 
-  const fetchNearbyRestaurants = async () => {
+  const fetchNearbyRestaurants = async (lat, lng) => {
     // Handle the search logic here, e.g., call an API to fetch results
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=5000&type=restaurant&key=${GOOGLE_MAPS_API_KEY}`
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=restaurant&key=${GOOGLE_MAPS_API_KEY}`
       );
       const data = await response.json();
       if (data.results) {
@@ -107,20 +126,36 @@ export default function CouponMap() {
   };
 
   const renderBottomSheetContent = () => (
-    <View style={styles.bottomSheetContent}>
+    <BottomSheetView style={styles.bottomSheetContent}>
       {selectedMarker ? (
-        <>
+        <View style={{ width: "100%" }}>
           <Text style={styles.markerTitle}>{selectedMarker.name}</Text>
-          <Text style={styles.markerDescription}>
-            {selectedMarker.description}
-          </Text>
-        </>
+          <View style={styles.couponPopupDeal}>
+            <View style={styles.couponPopupUser}>
+              <View style={styles.couponPopupImageContainer}>
+                <Image
+                  source={require("../../assets/images/user.png")}
+                  style={styles.couponPopupUserImage}
+                />
+              </View>
+
+              <Text style={styles.couponPopupUserName}>Username</Text>
+            </View>
+            <View style={styles.couponPopupDealDescription}>
+              <Text style={styles.couponPopupDealDescriptionText}>10% Off</Text>
+            </View>
+          </View>
+          <Image
+            style={styles.coupon_thumbnail}
+            source={require("../../assets/images/pancakes.jpg")}
+          />
+        </View>
       ) : (
         <Text style={styles.noMarkerSelected}>
           Select a marker to view details
         </Text>
       )}
-    </View>
+    </BottomSheetView>
   );
 
   const handleMarkerPress = (marker) => {
@@ -150,6 +185,7 @@ export default function CouponMap() {
                   latitude: lat,
                   longitude: lng,
                 }));
+                console.log("Region being updated from autofill");
                 fetchNearbyRestaurants(lat, lng);
               }
             }}
@@ -204,42 +240,31 @@ export default function CouponMap() {
             </View>
           </GooglePlacesAutocomplete>
         </View>
-
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          region={region}
-          zoomEnabled={true} // Ensure zoom gestures are enabled
-          scrollEnabled={true} // Enable panning
-          pitchEnabled={true} // Enable 3D tilt gestures
-          rotateEnabled={true}
-          // onRegionChange={(newRegion) => {
-          //   setRegion(newRegion); // Dynamically update the region during pinch-and-zoom
-          // }}
-          // onRegionChange={handleRegionChange}
-        >
-          {markers
-            ? markers.map((marker) => (
-                <Marker
-                  key={marker.id}
-                  coordinate={{
-                    latitude: marker.coordinate.latitude,
-                    longitude: marker.coordinate.longitude,
-                  }}
-                  title={marker.name}
-                  description={marker.description}
-                  pinColor="red"
-                  onPress={() => handleMarkerPress(marker)}
-                ></Marker>
-              ))
-            : null}
-        </MapView>
+        {location ? (
+          <MapView ref={mapRef} style={styles.map} initialRegion={region}>
+            {markers
+              ? markers.map((marker) => (
+                  <Marker
+                    key={marker.id}
+                    coordinate={{
+                      latitude: marker.coordinate.latitude,
+                      longitude: marker.coordinate.longitude,
+                    }}
+                    title={marker.name}
+                    description={marker.description}
+                    pinColor="red"
+                    onPress={() => handleMarkerPress(marker)}
+                  ></Marker>
+                ))
+              : null}
+          </MapView>
+        ) : null}
 
         <BottomSheet
           ref={bottomSheetRef}
-          index={0} // Default position (1 = closed)
-          snapPoints={["50%", "25%"]} // Custom heights
-          enablePanDownToClose={true} // Enable swipe down to close
+          index={-1}
+          snapPoints={snapPoints} // Added 0% as first snap point
+          enablePanDownToClose={true}
           style={{ zIndex: 10, elevation: 10 }}
         >
           {renderBottomSheetContent()}
@@ -280,5 +305,64 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 0,
+  },
+  bottomSheetContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "top",
+  },
+  markerTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    alignSelf: "center",
+  },
+  couponPopupDeal: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    marginLeft: "5%",
+    marginRight: "5%",
+    height: 50,
+  },
+  couponPopupUser: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+  couponPopupImageContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "red",
+  },
+  couponPopupUserImage: {
+    width: 30,
+    height: 30,
+  },
+  couponPopupDealDescription: {
+    position: "absolute",
+    right: "10%",
+    backgroundColor: "lightgreen",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
+    borderRadius: 20,
+    width: "50%",
+  },
+  couponPopupDealDescriptionText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 18,
+  },
+
+  coupon_thumbnail: {
+    width: vw("100%"), // Full screen width
+    height: "100%", // Allow height to adjust automatically
+    resizeMode: "stretch",
   },
 });
