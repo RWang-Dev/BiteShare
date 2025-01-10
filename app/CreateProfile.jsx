@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 800,
-    color: "#ff7b00",
+    color: "#E7630A",
     // marginTop: vh("2%"),
     fontFamily: "Roboto_400Regular",
   },

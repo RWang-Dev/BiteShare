@@ -23,7 +23,7 @@ import UserProfileSettings from "./UserProfileSettings";
 import DefaultUser from "../icons/DefaultUser";
 import Profile from "../icons/Profile";
 
-const UserProfile = () => {
+const UserProfile = (props) => {
   const [profileTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
 
   const TABS = {

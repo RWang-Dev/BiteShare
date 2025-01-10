@@ -13,7 +13,7 @@ import {
 import * as Location from "expo-location";
 
 import LocationDot from "../icons/LocationDot";
-import GOOGLE_MAPS_API_KEY from "../Keys";
+import { GOOGLE_MAPS_API_KEY } from "../../Keys";
 
 export default function CouponMap() {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -33,6 +33,7 @@ export default function CouponMap() {
 
   useEffect(() => {
     getLocation();
+    console.log("GOOGLE MAPS API: ", GOOGLE_MAPS_API_KEY);
   }, []);
 
   useEffect(() => {
