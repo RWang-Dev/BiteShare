@@ -23,9 +23,15 @@ import BackButton from "./icons/BackButton";
 import DefaultUser from "./icons/DefaultUser";
 import XButton from "./icons/XButton";
 
+import { useSelector, useDispatch } from "react-redux";
+import { setUsername, setImage } from "../store/slices/createProfile";
+
 const CreateProfile = () => {
-  const [image, setImage] = useState(null);
-  const [username, setUsername] = useState("");
+  // const [image, setImage] = useState(null);
+  const image = useSelector((state) => state.user.image);
+  // const [username, setUsername] = useState("");
+  const username = useSelector((state) => state.user.username);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   // useEffect(() => {
@@ -48,7 +54,7 @@ const CreateProfile = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      dispatch(setImage(result.assets[0].uri));
     }
   };
 
@@ -64,8 +70,8 @@ const CreateProfile = () => {
   };
   const handleSubmit = () => {
     // if (validateUsername(username)) {
-    //   console.log("Submitted profile for the following user: ");
-    //   console.log({ username, image });
+    console.log("Submitted profile for the following user: ");
+    console.log({ username, image });
     // } else {
     //   return;
     // }
@@ -75,7 +81,7 @@ const CreateProfile = () => {
   };
 
   const removeImg = () => {
-    setImage(null);
+    dispatch(setImage(null));
   };
 
   return (
@@ -119,7 +125,7 @@ const CreateProfile = () => {
         <TextInput
           placeholder="Enter your username ..."
           style={styles.username_input}
-          onChangeText={setUsername}
+          onChangeText={(text) => dispatch(setUsername(text))}
           value={username}
         />
         <View style={styles.username_underline} />
