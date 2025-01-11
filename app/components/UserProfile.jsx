@@ -97,7 +97,7 @@ const UserProfile = () => {
           </View>
         </View>
       </View>
-      <View style={styles.couponsSection}>
+      <View style={styles.contentSection}>
         <View style={styles.profileTabsContainer}>
           <Pressable
             style={
@@ -186,8 +186,7 @@ const UserProfile = () => {
 const styles = StyleSheet.create({
   main: {
     backgroundColor: "#EBEBEB",
-    width: vw("100%"),
-    height: vh("100%") - 75,
+    flex: 1,
   },
   profileBorder: {
     width: vw("22%"),
@@ -256,10 +255,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  couponsSection: {
+  contentSection: {
     backgroundColor: "white",
     marginTop: "1%",
-    height: "64%",
+    height: "65%",
     width: "100%",
   },
   profileTabsContainer: {
@@ -295,6 +294,7 @@ const styles = StyleSheet.create({
   },
   profileTabComponents: {
     flex: 1,
+    // backgroundColor: "black",
   },
 });
 
