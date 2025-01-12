@@ -23,7 +23,7 @@ import Profile from "../icons/Profile";
 
 const UserProfileCoupons = () => {
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Text style={styles.couponScrollHeader}>My Coupons</Text>
       <ScrollView contentContainerStyle={styles.couponScroll}>
         <View>

@@ -21,8 +21,12 @@ import CouponFeed from "./components/CouponFeed";
 import CouponMap from "./components/CouponMap";
 import UserProfile from "./components/UserProfile";
 
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { setTab } from "@/store/slices/mainLayout";
+
 const MainLayout = () => {
-  const [pageTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
+  const pageTab = useSelector((state) => state.mainLayout.tab); // "Coupon", "Map", "Profile" states
 
   const TABS = {
     COUPON: "Coupon",
@@ -48,7 +52,7 @@ const MainLayout = () => {
       <View style={styles.active_page}>{renderContent()}</View>
       {/* <CouponMap /> */}
       <View style={styles.footer}>
-        <Footer tab={pageTab} setTab={setTab} />
+        <Footer />
       </View>
     </View>
   );
@@ -59,7 +63,6 @@ const styles = StyleSheet.create({
     // width: vw("100%"),
     // height: vh("100%"),
     flex: 1,
-    backgroundColor: "white",
     position: "relative",
     // display: "flex",
   },
@@ -68,10 +71,12 @@ const styles = StyleSheet.create({
     // top: 0,
     // left: 0,
     // right: 0,
-    flex: 1,
+    width: vw("100%"),
+    height: vh("100%") - 65,
   },
   footer: {
     position: "absolute",
+    // backgroundColor: "black",
     bottom: 0,
     left: 0,
     right: 0,

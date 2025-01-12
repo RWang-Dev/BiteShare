@@ -20,7 +20,14 @@ import Coupon from "../icons/Coupon";
 import Location from "../icons/Location";
 import Profile from "../icons/Profile";
 
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { setTab } from "@/store/slices/mainLayout";
+
 const Footer = (props) => {
+  const pageTab = useSelector((state) => state.mainLayout.tab);
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.footer_container}>
       <Pressable
@@ -29,12 +36,12 @@ const Footer = (props) => {
         //   styles.footer_button,
         //   { backgroundColor: pressed ? "#5C5C5C7D" : "white" }, // Change background color when pressed
         // ]}
-        onPress={() => props.setTab("Coupon")}
+        onPress={() => dispatch(setTab("Coupon"))}
       >
         <Coupon
           width={35}
           height={35}
-          color={props.tab == "Coupon" ? "#ff7b00" : "gray"}
+          color={pageTab == "Coupon" ? "#ff7b00" : "gray"}
         />
       </Pressable>
 
@@ -44,12 +51,12 @@ const Footer = (props) => {
         //   styles.footer_button,
         //   { backgroundColor: pressed ? "#5C5C5C7D" : "white" }, // Change background color when pressed
         // ]}
-        onPress={() => props.setTab("Map")}
+        onPress={() => dispatch(setTab("Map"))}
       >
         <Location
           width={35}
           height={35}
-          color={props.tab == "Map" ? "#ff7b00" : "gray"}
+          color={pageTab == "Map" ? "#ff7b00" : "gray"}
         />
       </Pressable>
 
@@ -59,12 +66,12 @@ const Footer = (props) => {
         //   styles.footer_button,
         //   { backgroundColor: pressed ? "#5C5C5C7D" : "white" }, // Change background color when pressed
         // ]}
-        onPress={() => props.setTab("Profile")}
+        onPress={() => dispatch(setTab("Profile"))}
       >
         <Profile
           width={35}
           height={35}
-          color={props.tab == "Profile" ? "#ff7b00" : "gray"}
+          color={pageTab == "Profile" ? "#ff7b00" : "gray"}
         />
       </Pressable>
     </View>

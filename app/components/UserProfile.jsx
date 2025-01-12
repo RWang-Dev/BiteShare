@@ -20,14 +20,21 @@ import CouponItem from "./CouponItem";
 import UserProfileCoupons from "./UserProfileCoupons";
 import UserProfileSettings from "./UserProfileSettings";
 
+// Influencer components
+import UserProfilePosts from "./UserProfilePosts";
+import UserProfileDashboard from "./UserProfileDashboard";
+
 import DefaultUser from "../icons/DefaultUser";
 import Profile from "../icons/Profile";
 
 const UserProfile = () => {
   const [profileTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
+  const [userType, setUserType] = useState("influencer");
 
   const TABS = {
     COUPON: "Coupon",
+    POSTS: "Posts",
+    DASHBOARD: "Dashboard",
     SETTINGS: "Settings",
   };
 
@@ -35,6 +42,10 @@ const UserProfile = () => {
     switch (profileTab) {
       case TABS.COUPON:
         return <UserProfileCoupons />;
+      case TABS.POSTS:
+        return <UserProfilePosts />;
+      case TABS.DASHBOARD:
+        return <UserProfileDashboard />;
       case TABS.SETTINGS:
         return <UserProfileSettings />;
       default:
@@ -50,11 +61,27 @@ const UserProfile = () => {
             style={styles.user_default}
           />
         </View>
-
         <View style={styles.profileName}>
           <Text style={{ fontWeight: "bold" }}>Username</Text>
-          <Text style={{ fontWeight: "bold" }}>@user_account</Text>
+          {userType == "default" ? (
+            <Text style={{ fontWeight: "bold" }}>@user_account</Text>
+          ) : (
+            <Text style={{ fontWeight: "bold" }}>@influencer_account</Text>
+          )}
         </View>
+
+        {userType == "influencer" ? (
+          <View style={styles.influencerStats}>
+            <View style={styles.influencerFollowers}>
+              <Text style={{ fontWeight: "bold" }}>4.8K</Text>
+              <Text style={{ fontWeight: "bold" }}>Followers</Text>
+            </View>
+            <View style={styles.influencerLikes}>
+              <Text style={{ fontWeight: "bold" }}>36K</Text>
+              <Text style={{ fontWeight: "bold" }}>Likes</Text>
+            </View>
+          </View>
+        ) : null}
         <View style={styles.profileStats}>
           <View style={styles.profileStatsItem}>
             <Text style={{ fontWeight: "bold" }}>36</Text>
@@ -70,7 +97,7 @@ const UserProfile = () => {
           </View>
         </View>
       </View>
-      <View style={styles.couponsSection}>
+      <View style={styles.contentSection}>
         <View style={styles.profileTabsContainer}>
           <Pressable
             style={
@@ -87,9 +114,50 @@ const UserProfile = () => {
                   : { textAlign: "center", color: "black" }
               }
             >
-              My Coupons
+              Coupons
             </Text>
           </Pressable>
+
+          {userType == "influencer" ? (
+            <Pressable
+              style={
+                profileTab == "Posts"
+                  ? styles.profileTabActive
+                  : styles.profileTabDefault
+              }
+              onPress={() => setTab("Posts")}
+            >
+              <Text
+                style={
+                  profileTab == "Posts"
+                    ? { textAlign: "center", color: "white" }
+                    : { textAlign: "center", color: "black" }
+                }
+              >
+                My Posts
+              </Text>
+            </Pressable>
+          ) : null}
+          {userType == "influencer" ? (
+            <Pressable
+              style={
+                profileTab == "Dashboard"
+                  ? styles.profileTabActive
+                  : styles.profileTabDefault
+              }
+              onPress={() => setTab("Dashboard")}
+            >
+              <Text
+                style={
+                  profileTab == "Dashboard"
+                    ? { textAlign: "center", color: "white" }
+                    : { textAlign: "center", color: "black" }
+                }
+              >
+                Dashboard
+              </Text>
+            </Pressable>
+          ) : null}
           <Pressable
             style={
               profileTab == "Settings"
@@ -118,8 +186,7 @@ const UserProfile = () => {
 const styles = StyleSheet.create({
   main: {
     backgroundColor: "#EBEBEB",
-    width: vw("100%"),
-    height: vh("100%") - 75,
+    flex: 1,
   },
   profileBorder: {
     width: vw("22%"),
@@ -162,6 +229,25 @@ const styles = StyleSheet.create({
     marginTop: vh("2%"),
     gap: vw("10%"),
   },
+
+  influencerStats: {
+    width: "100%",
+    position: "absolute",
+    top: "20%",
+  },
+  influencerFollowers: {
+    position: "absolute",
+    left: "10%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  influencerLikes: {
+    position: "absolute",
+    right: "10%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   profileStatsItem: {
     display: "flex",
     flexDirection: "column",
@@ -169,10 +255,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  couponsSection: {
+  contentSection: {
     backgroundColor: "white",
     marginTop: "1%",
-    height: "64%",
+    height: "65%",
     width: "100%",
   },
   profileTabsContainer: {
@@ -189,6 +275,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
     display: "flex",
+    flexShrink: 1,
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
@@ -200,12 +287,14 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
     display: "flex",
+    flexShrink: 1,
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
   },
   profileTabComponents: {
     flex: 1,
+    // backgroundColor: "black",
   },
 });
 

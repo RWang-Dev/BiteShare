@@ -13,68 +13,63 @@ import {
 import * as Location from "expo-location";
 
 import LocationDot from "../icons/LocationDot";
-import GOOGLE_MAPS_API_KEY from "../Keys";
+import { GOOGLE_MAPS_API_KEY } from "../../Keys";
+
+// Redux
+import {
+  setSelectedMarker,
+  setLocation,
+  setRegion,
+  setSearchQuery,
+  setMarkers,
+} from "@/store/slices/couponMap";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function CouponMap() {
-  const [selectedMarker, setSelectedMarker] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-  const [searchQuery, setSearchQuery] = useState("");
-  const [markers, setMarkers] = useState([]);
+  const selectedMarker = useSelector((state) => state.couponMap.selectedMarker);
+  const location = useSelector((state) => state.couponMap.location);
+  // const [location, setLocation] = useState(null);
+  const region = useSelector((state) => state.couponMap.region);
+  const markers = useSelector((state) => state.couponMap.markers);
+  const [load, setLoad] = useState(true);
 
   const mapRef = useRef(null);
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getLocation();
+    // console.log("DEFAULT MARKERS: ", markers[0], markers.length);
+    console.log("DEFAULT LOCATION: ", location);
+    if (!location) {
+      console.log("GETTING NEW LOCATION !!!!!");
+      getLocation();
+    } else {
+      setLoad(false);
+    }
   }, []);
 
   useEffect(() => {
+    console.log("LOCATION IS BEING CHANGED: ", location);
     if (location) {
       fetchNearbyRestaurants(
         location.coords.latitude,
         location.coords.longitude
       );
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (mapRef.current && location) {
-      mapRef.current.animateToRegion(
-        {
+      dispatch(
+        setRegion({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        },
-        1000 // animation duration in ms
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        })
       );
+      setLoad(false);
     }
   }, [location]);
 
-  // useEffect(() => {
-  //   if (markers) {
-  //     console.log("Markers Updated: ", markers);
-  //   }
-  // }, [markers]);
-
   useEffect(() => {
-    console.log("REGION UPDATED: ", region);
-    console.log("MAPREF: ", mapRef);
-    if (region && mapRef.current) {
-      console.log("shifting region view");
+    if (mapRef.current && region) {
       mapRef.current.animateToRegion(
         region,
         1000 // animation duration in ms
@@ -83,7 +78,7 @@ export default function CouponMap() {
   }, [region]);
 
   const getLocation = async () => {
-    console.log("getting location");
+    console.log("LOCation is changing!!!!");
     let { status } = await Location.requestForegroundPermissionsAsync(); // Ensure correct permissions API
     if (status !== "granted") {
       Alert.alert(
@@ -96,7 +91,8 @@ export default function CouponMap() {
     let currentLocation = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
     });
-    setLocation(currentLocation);
+    // setLocation(currentLocation);
+    dispatch(setLocation(currentLocation));
   };
 
   const fetchNearbyRestaurants = async (lat, lng) => {
@@ -118,7 +114,7 @@ export default function CouponMap() {
           },
           // You can store any other data (e.g. rating, photos, etc.)
         }));
-        setMarkers(newMarkers);
+        dispatch(setMarkers(newMarkers));
       }
     } catch (error) {
       console.error("Error fetching restaurants:", error);
@@ -159,15 +155,9 @@ export default function CouponMap() {
   );
 
   const handleMarkerPress = (marker) => {
-    setSelectedMarker(marker);
+    dispatch(setSelectedMarker(marker));
     bottomSheetRef.current?.snapToIndex(0); // Use snapToIndex
   };
-
-  // useEffect(() => {
-  //   if (markers) {
-  //     console.log(markers);
-  //   }
-  // }, [markers]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -180,11 +170,21 @@ export default function CouponMap() {
               console.log("Pressing autofill");
               if (details) {
                 const { lat, lng } = details.geometry.location;
-                setRegion((prev) => ({
-                  ...prev,
-                  latitude: lat,
-                  longitude: lng,
-                }));
+                // dispatch(
+                //   setRegion((prev) => ({
+                //     ...prev,
+                //     latitude: lat,
+                //     longitude: lng,
+                //   }))
+                // );
+                dispatch(
+                  setRegion({
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                    latitude: lat,
+                    longitude: lng,
+                  })
+                );
                 console.log("Region being updated from autofill");
                 fetchNearbyRestaurants(lat, lng);
               }
@@ -240,22 +240,34 @@ export default function CouponMap() {
             </View>
           </GooglePlacesAutocomplete>
         </View>
-        {location ? (
-          <MapView ref={mapRef} style={styles.map} initialRegion={region}>
+
+        {location && !load ? (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={region}
+            showsPointsOfInterest={false}
+          >
             {markers
-              ? markers.map((marker) => (
-                  <Marker
-                    key={marker.id}
-                    coordinate={{
-                      latitude: marker.coordinate.latitude,
-                      longitude: marker.coordinate.longitude,
-                    }}
-                    title={marker.name}
-                    description={marker.description}
-                    pinColor="red"
-                    onPress={() => handleMarkerPress(marker)}
-                  ></Marker>
-                ))
+              ? markers.map((marker) => {
+                  // console.log("RENDERING MARKER: ", marker);
+                  return (
+                    <Marker
+                      key={marker.id}
+                      coordinate={{
+                        latitude: marker.coordinate.latitude,
+                        longitude: marker.coordinate.longitude,
+                      }}
+                      title={marker.name}
+                      description={marker.description}
+                      pinColor="red"
+                      onPress={() => {
+                        console.log("MARKER PRESSED");
+                        handleMarkerPress(marker);
+                      }}
+                    />
+                  );
+                })
               : null}
           </MapView>
         ) : null}
@@ -297,8 +309,8 @@ const styles = StyleSheet.create({
     top: vh("5%"),
     left: "7.5%",
     width: "85%",
-    height: 300,
-    // backgroundColor: "gray",
+    // height: ,
+    backgroundColor: "gray",
     zIndex: 15,
     elevation: 15, // This is important for Android
   },
