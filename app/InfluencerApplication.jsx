@@ -9,14 +9,20 @@ import {
 } from "react-native-responsive-screen";
 import BackButton from "./icons/BackButton";
 
-const InfluencerApplication = () => {
-  const [username, setUsername] = useState("");
+import { useSelector, useDispatch } from "react-redux";
+import { setUsername } from "@/store/slices/influencerApplication";
 
-  useEffect(() => {
-    if (username && username[0] !== "@") {
-      setUsername("@" + username);
+const InfluencerApplication = () => {
+  const username = useSelector((state) => state.influencerApplication.username);
+  const dispatch = useDispatch();
+
+  const handleChange = (text) => {
+    // If the text doesn't start with "@", prepend it.
+    if (text && !text.startsWith("@")) {
+      text = "@" + text;
     }
-  }, [username]);
+    dispatch(setUsername(text));
+  };
 
   const handleSubmit = () => {
     console.log("Submitting username:", username, "for verification!");
@@ -45,7 +51,7 @@ const InfluencerApplication = () => {
         <TextInput
           placeholder="@thebestfoodie"
           value={username}
-          onChangeText={setUsername}
+          onChangeText={handleChange}
           style={styles.usernameInput}
         />
         <Pressable style={styles.submitBtn} onPressOut={handleSubmit}>
