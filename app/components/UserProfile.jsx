@@ -27,9 +27,14 @@ import UserProfileDashboard from "./UserProfileDashboard";
 import DefaultUser from "../icons/DefaultUser";
 import Profile from "../icons/Profile";
 
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { setTab, setUserType } from "@/store/slices/userProfile";
+
 const UserProfile = () => {
-  const [profileTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
-  const [userType, setUserType] = useState("influencer");
+  const profileTab = useSelector((state) => state.userProfile.profileTab); // "Coupon", "Map", "Profile" states
+  const userType = useSelector((state) => state.userProfile.userType);
+  const dispatch = useDispatch();
 
   const TABS = {
     COUPON: "Coupon",
@@ -105,7 +110,7 @@ const UserProfile = () => {
                 ? styles.profileTabActive
                 : styles.profileTabDefault
             }
-            onPress={() => setTab("Coupon")}
+            onPress={() => dispatch(setTab("Coupon"))}
           >
             <Text
               style={
@@ -125,7 +130,7 @@ const UserProfile = () => {
                   ? styles.profileTabActive
                   : styles.profileTabDefault
               }
-              onPress={() => setTab("Posts")}
+              onPress={() => dispatch(setTab("Posts"))}
             >
               <Text
                 style={
@@ -145,7 +150,7 @@ const UserProfile = () => {
                   ? styles.profileTabActive
                   : styles.profileTabDefault
               }
-              onPress={() => setTab("Dashboard")}
+              onPress={() => dispatch(setTab("Dashboard"))}
             >
               <Text
                 style={
@@ -164,7 +169,7 @@ const UserProfile = () => {
                 ? styles.profileTabActive
                 : styles.profileTabDefault
             }
-            onPress={() => setTab("Settings")}
+            onPress={() => dispatch(setTab("Settings"))}
           >
             <Text
               style={
