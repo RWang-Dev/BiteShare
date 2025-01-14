@@ -2,22 +2,30 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Link, Redirect, useNavigation } from "expo-router";
 import React from "react";
 
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { setUserType } from "@/store/slices/userProfile";
+
 const UserProfileSettings = () => {
+  const userType = useSelector((state) => state.userProfile.userType);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.settingsHeader}>Profile Settings</Text>
       <View style={styles.settingsContainer}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.influencerApplicationBtn,
-            { backgroundColor: pressed ? "#A6A6A6" : "#EBEBEB" }, // Change background color when pressed
-          ]}
-          onPressOut={() => navigation.navigate("InfluencerApplication")}
-        >
-          <Text>Apply to be an influencer</Text>
-        </Pressable>
+        {userType == "default" ? (
+          <Pressable
+            style={({ pressed }) => [
+              styles.influencerApplicationBtn,
+              { backgroundColor: pressed ? "#A6A6A6" : "#EBEBEB" }, // Change background color when pressed
+            ]}
+            onPressOut={() => navigation.navigate("InfluencerApplication")}
+          >
+            <Text>Apply to be an influencer</Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );

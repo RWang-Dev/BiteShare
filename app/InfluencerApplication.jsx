@@ -26,6 +26,7 @@ const InfluencerApplication = () => {
 
   const handleSubmit = () => {
     console.log("Submitting username:", username, "for verification!");
+
     router.back();
   };
   return (

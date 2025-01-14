@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MagnifyingGlass from "../icons/MagnifyingGlass";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -13,6 +13,7 @@ import {
 import * as Location from "expo-location";
 
 import LocationDot from "../icons/LocationDot";
+import LocationArrow from "../icons/LocationArrow";
 import { GOOGLE_MAPS_API_KEY } from "../../Keys";
 
 // Redux
@@ -32,6 +33,7 @@ export default function CouponMap() {
   const region = useSelector((state) => state.couponMap.region);
   const markers = useSelector((state) => state.couponMap.markers);
   const [load, setLoad] = useState(true);
+  const [offCenter, setOffCenter] = useState(false);
 
   const mapRef = useRef(null);
   const bottomSheetRef = useRef(null);
@@ -40,22 +42,35 @@ export default function CouponMap() {
 
   useEffect(() => {
     // console.log("DEFAULT MARKERS: ", markers[0], markers.length);
-    console.log("DEFAULT LOCATION: ", location);
+    console.log("LOCATION INIT: ", location);
     if (!location) {
-      console.log("GETTING NEW LOCATION !!!!!");
       getLocation();
     } else {
+      console.log("SETTING LOAD TO FALSE");
       setLoad(false);
     }
   }, []);
 
   useEffect(() => {
-    console.log("LOCATION IS BEING CHANGED: ", location);
-    if (location) {
-      fetchNearbyRestaurants(
-        location.coords.latitude,
-        location.coords.longitude
+    if (location && region) {
+      let delta = Math.sqrt(
+        (location.coords.latitude - region.latitude) ** 2 +
+          (location.coords.longitude - region.longitude) ** 2
       );
+      if (delta > 0.001) {
+        setOffCenter(true);
+      } else {
+        setOffCenter(false);
+      }
+    }
+  }, [location, region]);
+
+  useEffect(() => {
+    if (location && load) {
+      setLoad(false);
+      if (markers.length > 0) {
+        return;
+      }
       dispatch(
         setRegion({
           latitude: location.coords.latitude,
@@ -64,9 +79,8 @@ export default function CouponMap() {
           longitudeDelta: 0.0421,
         })
       );
-      setLoad(false);
     }
-  }, [location]);
+  }, [location, load]);
 
   useEffect(() => {
     if (mapRef.current && region) {
@@ -74,11 +88,12 @@ export default function CouponMap() {
         region,
         1000 // animation duration in ms
       );
+
+      fetchNearbyRestaurants(region.latitude, region.longitude);
     }
   }, [region]);
 
   const getLocation = async () => {
-    console.log("LOCation is changing!!!!");
     let { status } = await Location.requestForegroundPermissionsAsync(); // Ensure correct permissions API
     if (status !== "granted") {
       Alert.alert(
@@ -97,6 +112,7 @@ export default function CouponMap() {
 
   const fetchNearbyRestaurants = async (lat, lng) => {
     // Handle the search logic here, e.g., call an API to fetch results
+    console.log("fetching nearby food");
     try {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=restaurant&key=${GOOGLE_MAPS_API_KEY}`
@@ -154,6 +170,26 @@ export default function CouponMap() {
     </BottomSheetView>
   );
 
+  const regionsAreEqual = (region1, region2) => {
+    return (
+      Math.abs(region1.latitude - region2.latitude) < 0.0001 &&
+      Math.abs(region1.longitude - region2.longitude) < 0.0001 &&
+      Math.abs(region1.latitudeDelta - region2.latitudeDelta) < 0.0001 &&
+      Math.abs(region1.longitudeDelta - region2.longitudeDelta) < 0.0001
+    );
+  };
+
+  const centerRegion = () => {
+    dispatch(
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      })
+    );
+  };
+
   const handleMarkerPress = (marker) => {
     dispatch(setSelectedMarker(marker));
     bottomSheetRef.current?.snapToIndex(0); // Use snapToIndex
@@ -161,22 +197,22 @@ export default function CouponMap() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, position: "relative" }}>
+        {offCenter ? (
+          <Pressable style={styles.recenterBtn} onPressOut={centerRegion}>
+            <LocationArrow width={20} height={20} color={"#5A84F0"} />
+            <Text style={{ color: "#5A84F0" }}>Re-center</Text>
+          </Pressable>
+        ) : null}
+
         <View style={styles.autoCompleteContainer}>
           <GooglePlacesAutocomplete
             placeholder="Search"
             fetchDetails={true}
+            enablePoweredByContainer={false}
             onPress={(data, details = null) => {
-              console.log("Pressing autofill");
               if (details) {
                 const { lat, lng } = details.geometry.location;
-                // dispatch(
-                //   setRegion((prev) => ({
-                //     ...prev,
-                //     latitude: lat,
-                //     longitude: lng,
-                //   }))
-                // );
                 dispatch(
                   setRegion({
                     latitudeDelta: 0.0922,
@@ -185,7 +221,6 @@ export default function CouponMap() {
                     longitude: lng,
                   })
                 );
-                console.log("Region being updated from autofill");
                 fetchNearbyRestaurants(lat, lng);
               }
             }}
@@ -247,6 +282,11 @@ export default function CouponMap() {
             style={styles.map}
             initialRegion={region}
             showsPointsOfInterest={false}
+            onRegionChangeComplete={(newRegion) => {
+              if (!regionsAreEqual(newRegion, region)) {
+                dispatch(setRegion(newRegion));
+              }
+            }}
           >
             {markers
               ? markers.map((marker) => {
@@ -376,5 +416,22 @@ const styles = StyleSheet.create({
     width: vw("100%"), // Full screen width
     height: "100%", // Allow height to adjust automatically
     resizeMode: "stretch",
+  },
+  recenterBtn: {
+    position: "absolute",
+    zIndex: 5,
+    elevation: 5,
+    bottom: 15,
+    // right: "7.5%", // Match the right spacing of your search bar
+    right: 15,
+    backgroundColor: "white", // Add this to see the button better
+    padding: 10, // Add some padding
+    borderRadius: 7, // Optional: for better appearance
+    display: "flex",
+    flexDirection: "row",
+    width: "25%",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 7,
   },
 });

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   profileTab: "Coupon",
-  userType: "default",
+  userType: "influencer",
 };
 
 const userProfileSlice = createSlice({
