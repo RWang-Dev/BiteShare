@@ -16,9 +16,9 @@ import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 
 // icons
-import Coupon from "../icons/Coupon";
-import Location from "../icons/Location";
-import Profile from "../icons/Profile";
+import Coupon from "../../assets/icons/Coupon";
+import Location from "../../assets/icons/Location";
+import Profile from "../../assets/icons/Profile";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";

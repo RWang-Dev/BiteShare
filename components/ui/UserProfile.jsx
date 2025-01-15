@@ -19,17 +19,26 @@ import Svg, { Path } from "react-native-svg";
 import CouponItem from "./CouponItem";
 import UserProfileCoupons from "./UserProfileCoupons";
 import UserProfileSettings from "./UserProfileSettings";
+import CouponRedemptionPopup from "./CouponRedemptionPopup";
 
 // Influencer components
 import UserProfilePosts from "./UserProfilePosts";
 import UserProfileDashboard from "./UserProfileDashboard";
 
-import DefaultUser from "../icons/DefaultUser";
-import Profile from "../icons/Profile";
+import DefaultUser from "../../assets/icons/DefaultUser";
+import Profile from "../../assets/icons/Profile";
+
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { setTab, setUserType } from "@/store/slices/userProfile";
+import { setActive, setID } from "@/store/slices/couponRedemption";
 
 const UserProfile = () => {
-  const [profileTab, setTab] = useState("Coupon"); // "Coupon", "Map", "Profile" states
-  const [userType, setUserType] = useState("influencer");
+  const profileTab = useSelector((state) => state.userProfile.profileTab); // "Coupon", "Map", "Profile" states
+  const userType = useSelector((state) => state.userProfile.userType);
+  const active = useSelector((state) => state.couponRedemption.active);
+  const ID = useSelector((state) => state.couponRedemption.ID);
+  const dispatch = useDispatch();
 
   const TABS = {
     COUPON: "Coupon",
@@ -54,6 +63,12 @@ const UserProfile = () => {
   };
   return (
     <View style={styles.main}>
+      {active ? (
+        <View style={styles.popup}>
+          <CouponRedemptionPopup id={ID} />
+        </View>
+      ) : null}
+
       <View style={styles.profileHeader}>
         <View style={styles.profileBorder}>
           <Image
@@ -105,7 +120,7 @@ const UserProfile = () => {
                 ? styles.profileTabActive
                 : styles.profileTabDefault
             }
-            onPress={() => setTab("Coupon")}
+            onPress={() => dispatch(setTab("Coupon"))}
           >
             <Text
               style={
@@ -125,7 +140,7 @@ const UserProfile = () => {
                   ? styles.profileTabActive
                   : styles.profileTabDefault
               }
-              onPress={() => setTab("Posts")}
+              onPress={() => dispatch(setTab("Posts"))}
             >
               <Text
                 style={
@@ -145,7 +160,7 @@ const UserProfile = () => {
                   ? styles.profileTabActive
                   : styles.profileTabDefault
               }
-              onPress={() => setTab("Dashboard")}
+              onPress={() => dispatch(setTab("Dashboard"))}
             >
               <Text
                 style={
@@ -164,7 +179,7 @@ const UserProfile = () => {
                 ? styles.profileTabActive
                 : styles.profileTabDefault
             }
-            onPress={() => setTab("Settings")}
+            onPress={() => dispatch(setTab("Settings"))}
           >
             <Text
               style={
@@ -187,6 +202,16 @@ const styles = StyleSheet.create({
   main: {
     backgroundColor: "#EBEBEB",
     flex: 1,
+  },
+  popup: {
+    position: "absolute",
+    top: "15%",
+    left: "5%",
+    // transform: [{ translateX: -50 }, { translateY: -50 }],
+    zIndex: 5,
+    elevation: 5,
+    width: vw("90%"),
+    height: vh("75%"),
   },
   profileBorder: {
     width: vw("22%"),

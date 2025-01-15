@@ -3,6 +3,8 @@ import userReducer from "./slices/createProfile";
 import influencerApplicationReducer from "./slices/influencerApplication";
 import mainLayoutReducer from "./slices/mainLayout";
 import couponMapReducer from "./slices/couponMap";
+import userProfileReducer from "./slices/userProfile";
+import couponRedemptionReducer from "./slices/couponRedemption";
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +12,7 @@ export const store = configureStore({
     influencerApplication: influencerApplicationReducer,
     mainLayout: mainLayoutReducer,
     couponMap: couponMapReducer,
+    userProfile: userProfileReducer,
+    couponRedemption: couponRedemptionReducer,
   },
 });

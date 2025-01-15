@@ -17,7 +17,7 @@ import * as Location from "expo-location";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
-import MagnifyingGlass from "../icons/MagnifyingGlass";
+import MagnifyingGlass from "../../assets/icons/MagnifyingGlass";
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyAYOoMzREk0iSjhjIgzVTlPB5fWURSY4Fg";
 
@@ -105,7 +105,7 @@ const CouponMap = () => {
               title="You are here"
               description="This is your current location."
               pinColor="blue"
-            />
+            ></Marker>
           ) : null}
         </MapView>
       </View>

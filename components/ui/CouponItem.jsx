@@ -17,19 +17,37 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 
 // icons
-import RightArrow from "../icons/RightArrow";
+import RightArrow from "../../assets/icons/RightArrow";
 
-const CouponItem = () => {
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { setActive, setID } from "@/store/slices/couponRedemption";
+
+const CouponItem = (props) => {
+  const active = useSelector((state) => state.couponRedemption.active);
+  const ID = useSelector((state) => state.couponRedemption.ID);
+  const dispatch = useDispatch();
+
+  const redeemCoupon = (key) => {
+    dispatch(setActive(true));
+    dispatch(setID(key));
+  };
+
   return (
     <View style={styles.main}>
       <View style={styles.couponLogo} />
       <View style={styles.couponDescription}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Chicken Wings</Text>
-        <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>{props.item}</Text>
+        <Text style={{ fontSize: 16 }}>{props.description}</Text>
       </View>
-      <View style={styles.redeemIcon}>
+      <Pressable
+        style={styles.redeemIcon}
+        onPressOut={() => {
+          redeemCoupon(props.id);
+        }}
+      >
         <RightArrow width={30} height={30} color={"black"} />
-      </View>
+      </Pressable>
     </View>
   );
 };

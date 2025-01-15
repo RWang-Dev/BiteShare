@@ -17,26 +17,16 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 
 // icons
-import Comment from "../icons/Comment";
-import Reply from "../icons/Reply";
+import Comment from "../../assets/icons/Comment";
+import Reply from "../../assets/icons/Reply";
 import { Lora_500Medium } from "@expo-google-fonts/dev";
 
-const CouponFeedItem = () => {
+const CouponBottomSheetItem = () => {
   return (
     <View style={styles.main}>
-      <View style={styles.profile_container}>
-        <View style={styles.profile_img} />
-        <Text>Account Name</Text>
-      </View>
-      <Image
-        style={styles.coupon_thumbnail}
-        source={require("../../assets/images/Coupon_feed_image.png")}
-      />
-
       <View style={styles.coupon_container}>
-        <View style={styles.coupon_logo} />
         <View style={styles.coupon_description}>
-          <Text style={styles.coupon_food_item}>Chicken Wings</Text>
+          <Text style={styles.coupon_food_item}>Pancakes</Text>
           <Pressable style={styles.claim_coupon_btn}>
             <Text style={styles.claim_coupon_btn_txt}>
               Buy One Basket Get One 50% Off
@@ -48,21 +38,17 @@ const CouponFeedItem = () => {
           </Text>
         </View>
       </View>
-
-      <View style={styles.comment_reply_container}>
-        <Comment width={30} height={30} color={"black"} />
-        <Reply width={30} height={30} color={"black"} />
-        <Text style={styles.number_claimed}>144 people claimed</Text>
-      </View>
-      <View style={styles.commentsContainer}>
-        <CommentItem
-          username={"Username"}
-          comment={
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet ipsam debitis, beatae rerum itaque voluptatem, temporibus ducimus reprehenderit rem fuga quasi aliquam, illo nesciunt optio maxime. Sint esse tempore rerum."
-          }
+      <View style={styles.couponThumbnailContainer}>
+        <Image
+          style={styles.couponThumbnail}
+          source={require("../../assets/images/pancakes.jpg")}
         />
       </View>
-      <Text style={styles.viewAllComments}>View all 99 comments</Text>
+
+      <View style={styles.profile_container}>
+        <View style={styles.profile_img} />
+        <Text>Account Name</Text>
+      </View>
     </View>
   );
 };
@@ -79,8 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 5,
-    marginBottom: 5,
+    marginTop: 10,
     gap: 15,
   },
   profile_img: {
@@ -89,10 +74,16 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 15,
   },
-  coupon_thumbnail: {
-    width: vw("100%"), // Full screen width
-    height: "60%", // Allow height to adjust automatically
-    resizeMode: "stretch",
+  couponThumbnail: {
+    width: "100%",
+    height: "auto",
+    aspectRatio: 0.75, // Remove this if you want the original aspect ratio
+    resizeMode: "cover", // or 'contain', based on preference
+  },
+  couponThumbnailContainer: {
+    width: "100%",
+    height: "75%",
+    overflow: "hidden",
   },
   coupon_container: {
     width: vw("100%"),
@@ -100,15 +91,16 @@ const styles = StyleSheet.create({
     display: "flex",
     gap: 15,
     flexDirection: "row",
-    borderBottomLeftRadius: 35,
-    borderBottomRightRadius: 35,
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
     backgroundColor: "#FFF0E2",
-    borderColor: "black",
-    borderBottomWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
+    // borderColor: "black",
+    // borderTopWidth: 1,
+    // borderLeftWidth: 1,
+    // borderRightWidth: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 5,
   },
   coupon_logo: {
     width: 75,
@@ -171,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CouponFeedItem;
+export default CouponBottomSheetItem;

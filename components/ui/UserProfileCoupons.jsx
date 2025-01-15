@@ -17,33 +17,30 @@ import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 
 import CouponItem from "./CouponItem";
+import CouponRedemptionPopup from "./CouponRedemptionPopup";
 
-import DefaultUser from "../icons/DefaultUser";
-import Profile from "../icons/Profile";
+import DefaultUser from "../../assets/icons/DefaultUser";
+import Profile from "../../assets/icons/Profile";
 
 const UserProfileCoupons = () => {
+  const coupons = [];
+
+  for (let i = 0; i < 5; i++) {
+    coupons.push(
+      <CouponItem
+        key={i}
+        id={i}
+        item={"Chicken Wings " + i}
+        description={"BOGO basket 50% Off"}
+      />
+    );
+  }
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.couponScrollHeader}>My Coupons</Text>
+
       <ScrollView contentContainerStyle={styles.couponScroll}>
-        <View>
-          <CouponItem />
-        </View>
-        <View>
-          <CouponItem />
-        </View>
-        <View>
-          <CouponItem />
-        </View>
-        <View>
-          <CouponItem />
-        </View>
-        <View>
-          <CouponItem />
-        </View>
-        <View>
-          <CouponItem />
-        </View>
+        {coupons.map((coupon) => coupon)}
       </ScrollView>
     </View>
   );

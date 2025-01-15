@@ -7,7 +7,7 @@ import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
-import BackButton from "./icons/BackButton";
+import BackButton from "../assets/icons/BackButton";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setUsername } from "@/store/slices/influencerApplication";
@@ -26,6 +26,7 @@ const InfluencerApplication = () => {
 
   const handleSubmit = () => {
     console.log("Submitting username:", username, "for verification!");
+
     router.back();
   };
   return (

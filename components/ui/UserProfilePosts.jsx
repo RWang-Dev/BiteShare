@@ -6,8 +6,8 @@ import {
 } from "react-native-responsive-screen";
 
 // icons
-import Images from "../icons/Images";
-import Video from "../icons/Video";
+import Images from "../../assets/icons/Images";
+import Video from "../../assets/icons/Video";
 
 const UserProfilePosts = () => {
   const posts = [];
