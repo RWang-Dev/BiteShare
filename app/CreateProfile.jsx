@@ -19,9 +19,9 @@ import Svg, { Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
 // icons
-import BackButton from "./icons/BackButton";
-import DefaultUser from "./icons/DefaultUser";
-import XButton from "./icons/XButton";
+import BackButton from "../assets/icons/BackButton";
+import DefaultUser from "../assets/icons/DefaultUser";
+import XButton from "../assets/icons/XButton";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setUsername, setImage } from "../store/slices/createProfile";

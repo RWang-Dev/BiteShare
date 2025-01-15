@@ -25,8 +25,8 @@ import CouponRedemptionPopup from "./CouponRedemptionPopup";
 import UserProfilePosts from "./UserProfilePosts";
 import UserProfileDashboard from "./UserProfileDashboard";
 
-import DefaultUser from "../icons/DefaultUser";
-import Profile from "../icons/Profile";
+import DefaultUser from "../../assets/icons/DefaultUser";
+import Profile from "../../assets/icons/Profile";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";

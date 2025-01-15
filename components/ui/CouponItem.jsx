@@ -17,7 +17,7 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 
 // icons
-import RightArrow from "../icons/RightArrow";
+import RightArrow from "../../assets/icons/RightArrow";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
@@ -29,7 +29,6 @@ const CouponItem = (props) => {
   const dispatch = useDispatch();
 
   const redeemCoupon = (key) => {
-    console.log("Key here: ", key);
     dispatch(setActive(true));
     dispatch(setID(key));
   };
@@ -44,7 +43,6 @@ const CouponItem = (props) => {
       <Pressable
         style={styles.redeemIcon}
         onPressOut={() => {
-          console.log("CURRENT PROP ID: ", props.id);
           redeemCoupon(props.id);
         }}
       >

@@ -4,6 +4,18 @@ import React from "react";
 import CouponItem from "./CouponItem";
 
 const UserProfileDashboard = () => {
+  const coupons = [];
+
+  for (let i = 0; i < 5; i++) {
+    coupons.push(
+      <CouponItem
+        key={i}
+        id={i}
+        item={"Chicken Wings " + i}
+        description={"BOGO basket 50% Off"}
+      />
+    );
+  }
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.settingsHeader}>My Dashboard</Text>
@@ -23,11 +35,7 @@ const UserProfileDashboard = () => {
       </View>
       <Text style={styles.settingsHeader}>Deals to Promote</Text>
       <ScrollView contentContainerStyle={styles.dealsScroll}>
-        <CouponItem />
-        <CouponItem />
-        <CouponItem />
-        <CouponItem />
-        <CouponItem />
+        {coupons.map((coupon) => coupon)}
       </ScrollView>
     </View>
   );

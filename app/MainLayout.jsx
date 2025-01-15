@@ -16,10 +16,12 @@ import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 
 // Components
-import Footer from "./components/Footer";
-import CouponFeed from "./components/CouponFeed";
-import CouponMap from "./components/CouponMap";
-import UserProfile from "./components/UserProfile";
+import Footer from "../components/ui/Footer";
+import CouponFeed from "../components/ui/CouponFeed";
+import CouponMap from "../components/ui/CouponMap";
+import UserProfile from "../components/ui/UserProfile";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
@@ -48,13 +50,16 @@ const MainLayout = () => {
   };
 
   return (
-    <View style={styles.main}>
-      <View style={styles.active_page}>{renderContent()}</View>
-      {/* <CouponMap /> */}
-      <View style={styles.footer}>
-        <Footer />
-      </View>
-    </View>
+    <GestureHandlerRootView>
+      <BottomSheetModalProvider>
+        <View style={styles.main}>
+          <View style={styles.active_page}>{renderContent()}</View>
+          <View style={styles.footer}>
+            <Footer />
+          </View>
+        </View>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 };
 

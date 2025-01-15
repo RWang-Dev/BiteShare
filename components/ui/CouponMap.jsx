@@ -1,19 +1,32 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import MagnifyingGlass from "../icons/MagnifyingGlass";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import MagnifyingGlass from "../../assets/icons/MagnifyingGlass";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetScrollView,
+  BottomSheetModalProvider,
+  BottomSheetModal,
+} from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
 import * as Location from "expo-location";
 
-import LocationDot from "../icons/LocationDot";
-import LocationArrow from "../icons/LocationArrow";
+import LocationDot from "../../assets/icons/LocationDot";
+import LocationArrow from "../../assets/icons/LocationArrow";
+import CouponBottomSheetItem from "./CouponBottomSheetItem";
 import { GOOGLE_MAPS_API_KEY } from "../../Keys";
 
 // Redux
@@ -36,9 +49,14 @@ export default function CouponMap() {
   const [offCenter, setOffCenter] = useState(false);
 
   const mapRef = useRef(null);
-  const bottomSheetRef = useRef(null);
+  const bottomSheetModalRef = useRef(null);
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
   const dispatch = useDispatch();
+
+  const handleDismiss = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+    dispatch(setSelectedMarker(null));
+  }, []);
 
   useEffect(() => {
     // console.log("DEFAULT MARKERS: ", markers[0], markers.length);
@@ -89,9 +107,17 @@ export default function CouponMap() {
         1000 // animation duration in ms
       );
 
-      fetchNearbyRestaurants(region.latitude, region.longitude);
+      // fetchNearbyRestaurants(region.latitude, region.longitude);
     }
   }, [region]);
+
+  useEffect(() => {
+    if (selectedMarker) {
+      // bottomSheetModalRef.current?.snapToIndex(0); // Use snapToIndex
+      bottomSheetModalRef.current?.present();
+      console.log("BOTTOM SHEET NOW VISIBLE");
+    }
+  }, [selectedMarker]);
 
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync(); // Ensure correct permissions API
@@ -137,38 +163,32 @@ export default function CouponMap() {
     }
   };
 
-  const renderBottomSheetContent = () => (
-    <BottomSheetView style={styles.bottomSheetContent}>
-      {selectedMarker ? (
-        <View style={{ width: "100%" }}>
-          <Text style={styles.markerTitle}>{selectedMarker.name}</Text>
-          <View style={styles.couponPopupDeal}>
-            <View style={styles.couponPopupUser}>
-              <View style={styles.couponPopupImageContainer}>
-                <Image
-                  source={require("../../assets/images/user.png")}
-                  style={styles.couponPopupUserImage}
-                />
-              </View>
+  const getCouponsByRestaurant = () => {
+    const couponsForRestaurant = [];
 
-              <Text style={styles.couponPopupUserName}>Username</Text>
-            </View>
-            <View style={styles.couponPopupDealDescription}>
-              <Text style={styles.couponPopupDealDescriptionText}>10% Off</Text>
-            </View>
-          </View>
-          <Image
-            style={styles.coupon_thumbnail}
-            source={require("../../assets/images/pancakes.jpg")}
-          />
+    for (let i = 0; i < 5; i++) {
+      couponsForRestaurant.push(
+        <View key={i} style={{ marginBottom: 5 }}>
+          <CouponBottomSheetItem />
         </View>
-      ) : (
-        <Text style={styles.noMarkerSelected}>
-          Select a marker to view details
-        </Text>
-      )}
-    </BottomSheetView>
-  );
+      );
+    }
+    return couponsForRestaurant;
+  };
+
+  const renderBottomSheetContent = () => {
+    return (
+      <BottomSheetScrollView contentContainerStyle={styles.bottomSheetContent}>
+        {selectedMarker ? (
+          getCouponsByRestaurant().map((coupon) => coupon)
+        ) : (
+          <Text style={styles.noMarkerSelected}>
+            Select a marker to view details
+          </Text>
+        )}
+      </BottomSheetScrollView>
+    );
+  };
 
   const regionsAreEqual = (region1, region2) => {
     return (
@@ -188,11 +208,6 @@ export default function CouponMap() {
         longitudeDelta: 0.0421,
       })
     );
-  };
-
-  const handleMarkerPress = (marker) => {
-    dispatch(setSelectedMarker(marker));
-    bottomSheetRef.current?.snapToIndex(0); // Use snapToIndex
   };
 
   return (
@@ -274,6 +289,20 @@ export default function CouponMap() {
               <MagnifyingGlass height={25} width={25} color={"white"} />
             </View>
           </GooglePlacesAutocomplete>
+          <Pressable
+            style={({ pressed }) => [
+              styles.couponsNearbyBtn,
+              {
+                borderColor: pressed ? "#ff7b00" : "white",
+                borderWidth: pressed ? 1 : 0,
+              }, // Change background color when pressed
+            ]}
+            onPressOut={() =>
+              fetchNearbyRestaurants(region.latitude, region.longitude)
+            }
+          >
+            <Text style={{ textAlign: "center" }}>Coupons Nearby</Text>
+          </Pressable>
         </View>
 
         {location && !load ? (
@@ -288,6 +317,16 @@ export default function CouponMap() {
               }
             }}
           >
+            <Marker
+              key={0}
+              coordinate={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              }}
+              title={"You"}
+              description={"Current Location"}
+              pinColor="blue"
+            />
             {markers
               ? markers.map((marker) => {
                   // console.log("RENDERING MARKER: ", marker);
@@ -303,7 +342,7 @@ export default function CouponMap() {
                       pinColor="red"
                       onPress={() => {
                         console.log("MARKER PRESSED");
-                        handleMarkerPress(marker);
+                        dispatch(setSelectedMarker(marker));
                       }}
                     />
                   );
@@ -311,22 +350,37 @@ export default function CouponMap() {
               : null}
           </MapView>
         ) : null}
-
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          snapPoints={snapPoints} // Added 0% as first snap point
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={0}
+          snapPoints={snapPoints}
           enablePanDownToClose={true}
-          style={{ zIndex: 10, elevation: 10 }}
+          onDismiss={handleDismiss}
+          backgroundStyle={styles.modalBackground}
         >
           {renderBottomSheetContent()}
-        </BottomSheet>
+          {/* <View>
+            <Text>Modal content above top navigation and bottom tabs</Text>
+          </View> */}
+        </BottomSheetModal>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  modalBackground: {
+    backgroundColor: "#EBEBEB",
+    borderRadius: 24,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   markerContainer: {
     alignItems: "center", // Center the SVG horizontally
     justifyContent: "center", // Center the SVG vertically
@@ -349,19 +403,23 @@ const styles = StyleSheet.create({
     top: vh("5%"),
     left: "7.5%",
     width: "85%",
-    // height: ,
-    backgroundColor: "gray",
     zIndex: 15,
     elevation: 15, // This is important for Android
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   map: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 0,
   },
   bottomSheetContent: {
-    flex: 1,
     alignItems: "center",
-    justifyContent: "top",
+    // justifyContent: "top",  <-- not valid; use "flex-start" if you want top alignment
+    justifyContent: "flex-start",
+    zIndex: 5,
+    elevation: 5,
+    // overflow: "scroll",
   },
   markerTitle: {
     fontSize: 16,
@@ -419,8 +477,8 @@ const styles = StyleSheet.create({
   },
   recenterBtn: {
     position: "absolute",
-    zIndex: 5,
-    elevation: 5,
+    zIndex: 1,
+    elevation: 1,
     bottom: 15,
     // right: "7.5%", // Match the right spacing of your search bar
     right: 15,
@@ -433,5 +491,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 7,
+  },
+  couponsNearbyBtn: {
+    width: 150,
+    height: 25,
+    marginTop: 55,
+    backgroundColor: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 12.5,
   },
 });

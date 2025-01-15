@@ -16,10 +16,10 @@ import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 
 // icons
-import BackButton from "./icons/BackButton";
-import Cutlery from "./icons/Cutlery";
-import InstagramLogo from "./icons/InstagramLogo";
-import AppleLogo from "./icons/AppleLogo";
+import BackButton from "../assets/icons/BackButton";
+import Cutlery from "../assets/icons/Cutlery";
+import InstagramLogo from "../assets/icons/InstagramLogo";
+import AppleLogo from "../assets/icons/AppleLogo";
 
 const App = () => {
   const authenticateUser = (method) => {

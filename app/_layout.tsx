@@ -38,6 +38,8 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
+      {/* <GestureHandlerRootView>
+        <BottomSheetModalProvider> */}
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
@@ -53,6 +55,8 @@ export default function RootLayout() {
         </Stack>
         {/* <StatusBar style="auto" /> */}
       </ThemeProvider>
+      {/* </BottomSheetModalProvider>
+      </GestureHandlerRootView> */}
     </Provider>
   );
 }
