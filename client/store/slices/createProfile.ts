@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface UserState {
+  image: string | null;
+  username: string;
+}
+
+const initialState: UserState = {
   image: null,
   username: "",
 };

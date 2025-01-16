@@ -1,3 +1,4 @@
+// react
 import React from "react";
 import {
   View,
@@ -7,13 +8,17 @@ import {
   Dimensions,
   Pressable,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
 import { Link } from "expo-router";
-import Svg, { Path } from "react-native-svg";
+
+// Auth0
+import auth0 from "@/auth0";
+
+// Misc
+import { LinearGradient } from "expo-linear-gradient";
 
 // icons
 import BackButton from "../assets/icons/BackButton";
@@ -21,11 +26,23 @@ import Cutlery from "../assets/icons/Cutlery";
 import InstagramLogo from "../assets/icons/InstagramLogo";
 import AppleLogo from "../assets/icons/AppleLogo";
 
-const App = () => {
-  const authenticateUser = (method) => {
-    console.log("TODO:: Implement OAuth authentication");
-    console.log("Logging in user with: ", method);
-    return;
+const App: React.FC = () => {
+  const authenticateUser = async (
+    method: "google-oauth2" | "apple" | "instagram"
+  ) => {
+    try {
+      const result = await auth0.webAuth.authorize({
+        connection: method,
+        scope: "openid profile email",
+      });
+      console.log("Access Token: ", result.accessToken);
+      console.log(
+        "User Info: ",
+        await auth0.auth.userInfo({ token: result.accessToken })
+      );
+    } catch (error) {
+      console.error("Authentication error: ", error);
+    }
   };
 
   return (
@@ -49,9 +66,12 @@ const App = () => {
             end={{ x: 1, y: 0 }}
             style={styles.instagram_gradient}
           >
-            <InstagramLogo width={30} height={30} />
-            <Link href="/CreateProfile" asChild>
-              <Pressable onPress={() => authenticateUser("Instagram")}>
+            <Link href={"/CreateProfile"} asChild>
+              <Pressable
+                onPress={() => authenticateUser("instagram")}
+                style={styles.loginItemBtn}
+              >
+                <InstagramLogo width={30} height={30} />
                 <Text style={styles.instagram_text}>
                   Sign in with Instagram
                 </Text>
@@ -60,20 +80,26 @@ const App = () => {
           </LinearGradient>
         </View>
         <View style={styles.login_item}>
-          <Image
-            source={require("../assets/images/google.png")}
-            style={styles.google_logo}
-          />
           <Link href="/CreateProfile" asChild>
-            <Pressable onPress={() => authenticateUser("Google")}>
+            <Pressable
+              onPress={() => authenticateUser("google-oauth2")}
+              style={styles.loginItemBtn}
+            >
+              <Image
+                source={require("../assets/images/google.png")}
+                style={styles.google_logo}
+              />
               <Text style={styles.center_text}>Continue with Google</Text>
             </Pressable>
           </Link>
         </View>
         <View style={styles.login_item}>
-          <AppleLogo width={27} height={27} />
           <Link href="/CreateProfile" asChild>
-            <Pressable onPress={() => authenticateUser("Apple")}>
+            <Pressable
+              onPress={() => authenticateUser("apple")}
+              style={styles.loginItemBtn}
+            >
+              <AppleLogo width={27} height={27} />
               <Text style={styles.center_text}>Continue with Apple</Text>
             </Pressable>
           </Link>
@@ -126,7 +152,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 18,
     fontWeight: "500",
-    marginTop: "10",
+    marginTop: 10,
     width: vw("80%"),
     color: "white",
     textAlign: "center",
@@ -144,6 +170,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 15,
+  },
+  loginItemBtn: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   center_text: {
     textAlign: "center",

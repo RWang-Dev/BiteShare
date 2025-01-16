@@ -61,7 +61,10 @@ const CouponRedemptionPopup = (props) => {
         </View>
       </View>
       <Pressable
-        style={styles.cancelRedemptionBtn}
+        style={({ pressed }) => [
+          styles.cancelRedemptionBtn,
+          { backgroundColor: pressed ? "#ac5a1c" : "#D26E22" }, // Change background color when pressed
+        ]}
         onPressOut={cancelRedemption}
       >
         <Text style={{ fontWeight: "900", fontSize: 20, color: "white" }}>

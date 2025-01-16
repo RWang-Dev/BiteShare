@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// react
+import React, { useState, useEffect, FC } from "react";
 import {
   View,
   Image,
@@ -15,24 +16,43 @@ import {
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
 import { Link, Redirect } from "expo-router";
-import Svg, { Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
+
 // icons
 import BackButton from "../assets/icons/BackButton";
 import DefaultUser from "../assets/icons/DefaultUser";
 import XButton from "../assets/icons/XButton";
 
-import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+
+// server
+import { API_BASE_URL } from "@/api.config";
+
+// redux
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUsername, setImage } from "../store/slices/createProfile";
 
-const CreateProfile = () => {
-  // const [image, setImage] = useState(null);
-  const image = useSelector((state) => state.user.image);
-  // const [username, setUsername] = useState("");
-  const username = useSelector((state) => state.user.username);
-  const dispatch = useDispatch();
+const CreateProfile: FC = () => {
+  const image = useAppSelector((state) => state.user.image);
+  const username = useAppSelector((state) => state.user.username);
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const [backendData, setBackendData] = useState();
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/test`);
+      console.log(response.data);
+      setBackendData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // useEffect(() => {
   //   console.log("Username: ", username);
@@ -58,7 +78,7 @@ const CreateProfile = () => {
     }
   };
 
-  const validateUsername = (username) => {
+  const validateUsername = (username: string) => {
     if (username.length < 3) {
       console.log("Username is too short");
       return false;
@@ -69,13 +89,8 @@ const CreateProfile = () => {
     return true;
   };
   const handleSubmit = () => {
-    // if (validateUsername(username)) {
     console.log("Submitted profile for the following user: ");
     console.log({ username, image });
-    // } else {
-    //   return;
-    // }
-    // console.log("TODO:: Add user and profile image to the database");
     navigation.navigate("MainLayout");
     return;
   };
@@ -112,7 +127,6 @@ const CreateProfile = () => {
       </View>
 
       <Pressable
-        title="Add picture"
         style={({ pressed }) => [
           styles.add_picture,
           { backgroundColor: pressed ? "#A6A6A6" : "#E9E9E9" }, // Change background color when pressed
@@ -128,11 +142,10 @@ const CreateProfile = () => {
           onChangeText={(text) => dispatch(setUsername(text))}
           value={username}
         />
-        <View style={styles.username_underline} />
+        <View />
       </View>
 
       <Pressable
-        title="Submit"
         style={({ pressed }) => [
           styles.submit_button,
           { backgroundColor: pressed ? "#B6632D" : "#DB7634" }, // Change background color when pressed
@@ -223,19 +236,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-
-  // imageContainer: {
-  //   width: "100%",
-  //   height: "100%",
-  //   borderRadius: vw("25%"),
-  //   overflow: "hidden",
-  // },
-
   profileImage: {
     width: vw("49%"),
     height: vw("49%"),
     borderRadius: vw("24.5%"),
-    resizeMode: "cover", // This ensures the image covers the entire container
+    resizeMode: "cover",
   },
 
   remove_img_btn: {
@@ -254,7 +259,6 @@ const styles = StyleSheet.create({
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
-    verticalAlign: "center",
     width: vw("60%"),
     height: vw("60%"),
   },
