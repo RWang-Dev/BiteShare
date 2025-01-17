@@ -1,6 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface LayoutState {
+  tab: string;
+}
+const initialState: LayoutState = {
   tab: "Coupon",
 };
 
@@ -8,7 +11,7 @@ const mainLayoutSlice = createSlice({
   name: "mainLayout",
   initialState,
   reducers: {
-    setTab: (state, action) => {
+    setTab: (state, action: PayloadAction<string>) => {
       state.tab = action.payload;
     },
   },

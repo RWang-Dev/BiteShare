@@ -91,7 +91,7 @@ const CreateProfile: FC = () => {
   const handleSubmit = () => {
     console.log("Submitted profile for the following user: ");
     console.log({ username, image });
-    navigation.navigate("MainLayout");
+    navigation.navigate("MainLayout" as never);
     return;
   };
 

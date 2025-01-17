@@ -12,10 +12,11 @@ import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 
 // Auth0
 import auth0 from "@/auth0";
+import { useAuth0, Auth0Provider } from "react-native-auth0";
 
 // Misc
 import { LinearGradient } from "expo-linear-gradient";
@@ -27,6 +28,30 @@ import InstagramLogo from "../assets/icons/InstagramLogo";
 import AppleLogo from "../assets/icons/AppleLogo";
 
 const App: React.FC = () => {
+  const { authorize, clearSession, user, error, isLoading } = useAuth0();
+  const navigation = useNavigation();
+
+  const onLogin = async () => {
+    try {
+      await authorize();
+      console.log("Authorized");
+      console.log(user);
+      navigation.navigate("CreateProfile" as never);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onLogout = async () => {
+    try {
+      await clearSession();
+    } catch (e) {
+      console.log("Log out cancelled");
+    }
+  };
+
+  const loggedIn = user !== undefined && user !== null;
+
   const authenticateUser = async (
     method: "google-oauth2" | "apple" | "instagram"
   ) => {
@@ -66,43 +91,44 @@ const App: React.FC = () => {
             end={{ x: 1, y: 0 }}
             style={styles.instagram_gradient}
           >
-            <Link href={"/CreateProfile"} asChild>
-              <Pressable
-                onPress={() => authenticateUser("instagram")}
-                style={styles.loginItemBtn}
-              >
-                <InstagramLogo width={30} height={30} />
-                <Text style={styles.instagram_text}>
-                  Sign in with Instagram
-                </Text>
-              </Pressable>
-            </Link>
+            {/* <Link href={"/CreateProfile"} asChild> */}
+            <Pressable
+              // onPress={() => authenticateUser("instagram")}
+              onPress={onLogin}
+              style={styles.loginItemBtn}
+            >
+              <InstagramLogo width={30} height={30} color={"white"} />
+              <Text style={styles.instagram_text}>Sign in with Instagram</Text>
+            </Pressable>
+            {/* </Link> */}
           </LinearGradient>
         </View>
         <View style={styles.login_item}>
-          <Link href="/CreateProfile" asChild>
-            <Pressable
-              onPress={() => authenticateUser("google-oauth2")}
-              style={styles.loginItemBtn}
-            >
-              <Image
-                source={require("../assets/images/google.png")}
-                style={styles.google_logo}
-              />
-              <Text style={styles.center_text}>Continue with Google</Text>
-            </Pressable>
-          </Link>
+          {/* <Link href="/CreateProfile" asChild> */}
+          <Pressable
+            // onPress={() => authenticateUser("google-oauth2")}
+            onPress={onLogin}
+            style={styles.loginItemBtn}
+          >
+            <Image
+              source={require("../assets/images/google.png")}
+              style={styles.google_logo}
+            />
+            <Text style={styles.center_text}>Continue with Google</Text>
+          </Pressable>
+          {/* </Link> */}
         </View>
         <View style={styles.login_item}>
-          <Link href="/CreateProfile" asChild>
-            <Pressable
-              onPress={() => authenticateUser("apple")}
-              style={styles.loginItemBtn}
-            >
-              <AppleLogo width={27} height={27} />
-              <Text style={styles.center_text}>Continue with Apple</Text>
-            </Pressable>
-          </Link>
+          {/* <Link href="/CreateProfile" asChild> */}
+          <Pressable
+            // onPress={() => authenticateUser("apple")}
+            onPress={onLogin}
+            style={styles.loginItemBtn}
+          >
+            <AppleLogo width={27} height={27} color={"black"} />
+            <Text style={styles.center_text}>Continue with Apple</Text>
+          </Pressable>
+          {/* </Link> */}
         </View>
       </LinearGradient>
     </View>

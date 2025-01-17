@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.BiteShare"
     },
     "web": {
       "bundler": "metro",
@@ -23,6 +24,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "react-native-auth0",
+        {
+          "domain": "dev-z4uimkzxx4hb8ojn.us.auth0.com"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -38,6 +45,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9a46ba72-c5c9-4899-85ce-62528b0dfef4"
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
   image: string | null;
@@ -14,10 +14,10 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUsername: (state, action) => {
+    setUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
     },
-    setImage: (state, action) => {
+    setImage: (state, action: PayloadAction<string | null>) => {
       state.image = action.payload;
     },
   },

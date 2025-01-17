@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import {
   View,
   Image,
@@ -24,11 +24,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setTab } from "@/store/slices/mainLayout";
 
-const MainLayout = () => {
-  const pageTab = useSelector((state) => state.mainLayout.tab); // "Coupon", "Map", "Profile" states
+const MainLayout: FC = () => {
+  const pageTab = useAppSelector((state) => state.mainLayout.tab); // "Coupon", "Map", "Profile" states
 
   const TABS = {
     COUPON: "Coupon",
@@ -65,23 +65,15 @@ const MainLayout = () => {
 
 const styles = StyleSheet.create({
   main: {
-    // width: vw("100%"),
-    // height: vh("100%"),
     flex: 1,
     position: "relative",
-    // display: "flex",
   },
   active_page: {
-    // position: "absolute",
-    // top: 0,
-    // left: 0,
-    // right: 0,
     width: vw("100%"),
     height: vh("100%") - 65,
   },
   footer: {
     position: "absolute",
-    // backgroundColor: "black",
     bottom: 0,
     left: 0,
     right: 0,

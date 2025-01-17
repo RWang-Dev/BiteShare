@@ -9,14 +9,16 @@ import {
 } from "react-native-responsive-screen";
 import BackButton from "../assets/icons/BackButton";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUsername } from "@/store/slices/influencerApplication";
 
 const InfluencerApplication = () => {
-  const username = useSelector((state) => state.influencerApplication.username);
-  const dispatch = useDispatch();
+  const username = useAppSelector(
+    (state) => state.influencerApplication.username
+  );
+  const dispatch = useAppDispatch();
 
-  const handleChange = (text) => {
+  const handleChange = (text: string) => {
     // If the text doesn't start with "@", prepend it.
     if (text && !text.startsWith("@")) {
       text = "@" + text;

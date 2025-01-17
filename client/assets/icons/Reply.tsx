@@ -1,10 +1,17 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
+import { SvgIcon } from "@/types";
 
-const Reply = (props) => {
+interface ReplyProps {
+  width: number;
+  height: number;
+  color: string;
+  strokeWidth: number;
+}
+
+const Reply = (props: ReplyProps) => {
   return (
     <Svg
-      xmlns="http://www.w3.org/2000/svg"
       viewBox="-20 -20 550 550"
       width={props.width || 800}
       height={props.height || 800}

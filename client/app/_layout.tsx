@@ -14,6 +14,7 @@ import { Roboto_400Regular } from "@expo-google-fonts/dev";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 import { Provider } from "react-redux";
+import { Auth0Provider } from "react-native-auth0";
 import { store } from "../store/store";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -38,23 +39,33 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      {/* <GestureHandlerRootView>
+      <Auth0Provider
+        domain={"dev-z4uimkzxx4hb8ojn.us.auth0.com"}
+        clientId={"2Wg8giThjtn0seet8S4Vkt5NvbcZNMfz"}
+      >
+        {/* <GestureHandlerRootView>
         <BottomSheetModalProvider> */}
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="CreateProfile" options={{ headerShown: false }} />
-          <Stack.Screen name="MainLayout" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="InfluencerApplication"
-            options={{ headerShown: false }}
-          />
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="CreateProfile"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="MainLayout" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="InfluencerApplication"
+              options={{ headerShown: false }}
+            />
 
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        {/* <StatusBar style="auto" /> */}
-      </ThemeProvider>
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          {/* <StatusBar style="auto" /> */}
+        </ThemeProvider>
+      </Auth0Provider>
       {/* </BottomSheetModalProvider>
       </GestureHandlerRootView> */}
     </Provider>

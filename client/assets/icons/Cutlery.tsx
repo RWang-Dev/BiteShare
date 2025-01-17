@@ -1,14 +1,10 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
+import { SvgIcon } from "@/types";
 
-const Cutlery = (props) => {
+const Cutlery = (props: SvgIcon) => {
   return (
-    <Svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100"
-      width={props.width}
-      height={props.height}
-    >
+    <Svg viewBox="0 0 100 100" width={props.width} height={props.height}>
       <Path
         d="M80.665,73.284L54.211,51.123l6.21-7.283l0.021,0.021l1.971,1.93c3.644,3.567,6.906-1.104,6.906-1.104l13.578-17.289
 	l-0.967-0.947L66.418,41.847l-1.413-1.383l14.174-16.707l-0.818-0.801l-15.59,15.302l-1.351-1.322l14.971-15.91l-0.818-0.801
@@ -18,7 +14,7 @@ const Cutlery = (props) => {
 	c0.009,0.012,0.014,0.019,0.014,0.019l0.004-0.005c0.512,0.372,6.191,4.361,9.11,0.049l20.72-24.303l22.358,25.573
 	c2.598,3.848,8.102-0.349,8.598-0.739l0.004,0.004c0,0,0.005-0.006,0.015-0.018c0.012-0.01,0.018-0.015,0.018-0.015l-0.004-0.005
 	C80.487,81.392,84.567,75.801,80.665,73.284z"
-        fill="#D26E22"
+        fill={props.color}
       />
     </Svg>
   );
