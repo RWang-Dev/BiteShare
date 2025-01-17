@@ -39,33 +39,23 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <Auth0Provider
-        domain={"dev-z4uimkzxx4hb8ojn.us.auth0.com"}
-        clientId={"2Wg8giThjtn0seet8S4Vkt5NvbcZNMfz"}
-      >
-        {/* <GestureHandlerRootView>
+      {/* <GestureHandlerRootView>
         <BottomSheetModalProvider> */}
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="CreateProfile"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="MainLayout" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="InfluencerApplication"
-              options={{ headerShown: false }}
-            />
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="CreateProfile" options={{ headerShown: false }} />
+          <Stack.Screen name="MainLayout" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="InfluencerApplication"
+            options={{ headerShown: false }}
+          />
 
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          {/* <StatusBar style="auto" /> */}
-        </ThemeProvider>
-      </Auth0Provider>
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        {/* <StatusBar style="auto" /> */}
+      </ThemeProvider>
       {/* </BottomSheetModalProvider>
       </GestureHandlerRootView> */}
     </Provider>

@@ -1,5 +1,5 @@
 // react
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -17,6 +17,8 @@ import { Link, useNavigation } from "expo-router";
 // Auth0
 import auth0 from "@/auth0";
 import { useAuth0, Auth0Provider } from "react-native-auth0";
+import * as WebBrowser from "expo-web-browser";
+import * as AuthSession from "expo-auth-session";
 
 // Misc
 import { LinearGradient } from "expo-linear-gradient";
@@ -27,30 +29,39 @@ import Cutlery from "../assets/icons/Cutlery";
 import InstagramLogo from "../assets/icons/InstagramLogo";
 import AppleLogo from "../assets/icons/AppleLogo";
 
+WebBrowser.maybeCompleteAuthSession();
+
+const AUTH0_DOMAIN = "dev-z4uimkzxx4hb8ojn.us.auth0.com";
+const AUTH0_CLIENT_ID = "2Wg8giThjtn0seet8S4Vkt5NvbcZNMfz";
 const App: React.FC = () => {
-  const { authorize, clearSession, user, error, isLoading } = useAuth0();
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: AUTH0_CLIENT_ID,
+      responseType: AuthSession.ResponseType.Token,
+      scopes: ["openid", "profile", "email"],
+      redirectUri: "exp://10.136.32.187:8081",
+    },
+    {
+      authorizationEndpoint: `https://${AUTH0_DOMAIN}/authorize`,
+    }
+  );
   const navigation = useNavigation();
 
-  const onLogin = async () => {
-    try {
-      await authorize();
-      console.log("Authorized");
-      console.log(user);
-      navigation.navigate("CreateProfile" as never);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { access_token, id_token } = response.params;
 
-  const onLogout = async () => {
-    try {
-      await clearSession();
-    } catch (e) {
-      console.log("Log out cancelled");
+      console.log("LOGIN SUCCESS");
+    } else if (response?.type === "error") {
+      // Handle errors
     }
-  };
+  }, [response]);
 
-  const loggedIn = user !== undefined && user !== null;
+  const handleLogin = () => {
+    console.log("Redirect URI:", request?.redirectUri);
+    console.log("Redirect URI Generated:", AuthSession.makeRedirectUri());
+    promptAsync();
+  };
 
   const authenticateUser = async (
     method: "google-oauth2" | "apple" | "instagram"
@@ -94,7 +105,7 @@ const App: React.FC = () => {
             {/* <Link href={"/CreateProfile"} asChild> */}
             <Pressable
               // onPress={() => authenticateUser("instagram")}
-              onPress={onLogin}
+              onPress={handleLogin}
               style={styles.loginItemBtn}
             >
               <InstagramLogo width={30} height={30} color={"white"} />
@@ -107,7 +118,7 @@ const App: React.FC = () => {
           {/* <Link href="/CreateProfile" asChild> */}
           <Pressable
             // onPress={() => authenticateUser("google-oauth2")}
-            onPress={onLogin}
+            onPress={handleLogin}
             style={styles.loginItemBtn}
           >
             <Image
@@ -122,7 +133,7 @@ const App: React.FC = () => {
           {/* <Link href="/CreateProfile" asChild> */}
           <Pressable
             // onPress={() => authenticateUser("apple")}
-            onPress={onLogin}
+            onPress={handleLogin}
             style={styles.loginItemBtn}
           >
             <AppleLogo width={27} height={27} color={"black"} />
