@@ -18,43 +18,12 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 
 // icons
-import RightArrow from "../../assets/icons/RightArrow";
+import RightArrow from "../icons/RightArrow";
 
-// Redux
-import { useSelector, useDispatch } from "react-redux";
-import { setActive, setID } from "@/store/slices/couponRedemption";
-
-const CouponItem = (props) => {
-  const active = useSelector((state) => state.couponRedemption.active);
-  const ID = useSelector((state) => state.couponRedemption.ID);
-  const dispatch = useDispatch();
-
-  const redeemCoupon = (key) => {
-    dispatch(setActive(true));
-    dispatch(setID(key));
-  };
-
-<<<<<<< HEAD:client/components/ui/CouponItem.jsx
-  return (
-    <View style={styles.main}>
-      <View style={styles.couponLogo} />
-      <View style={styles.couponDescription}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>{props.item}</Text>
-        <Text style={{ fontSize: 16 }}>{props.description}</Text>
-      </View>
-      <Pressable
-        style={styles.redeemIcon}
-        onPressOut={() => {
-          redeemCoupon(props.id);
-        }}
-      >
-        <RightArrow width={30} height={30} color={"black"} />
-      </Pressable>
-=======
-const CouponItem = ({style, width = vw("95%")}) => {
+const CouponForFeed = () => {
     {/* Replace with redeem functionality */}
     const handlePress = () => {
-      Alert.alert("Coupon redeemed")
+      Alert.alert("Coupon claimed")
     }
 
   return (
@@ -75,12 +44,11 @@ const CouponItem = ({style, width = vw("95%")}) => {
       {/* Bottom Section */}
       <View style={styles.bottomSection}>
         <Pressable style={styles.redeemIcon} onPress={handlePress}>
-        <Text style={styles.redeemText}>Redeem</Text>
+        <Text style={styles.redeemText}>Claim</Text>
         </Pressable>
         <Text style={styles.expirationText}>Expires 01/31/2025</Text>
       </View>
 
->>>>>>> 75bddfd (Re-Designed coupons and coupon feed.):app/components/CouponItem.jsx
     </View>
   );
 };
@@ -89,25 +57,22 @@ const CouponItem = ({style, width = vw("95%")}) => {
 const styles = StyleSheet.create({
   main: {
     backgroundColor: "#FFF3E2",
-    width: vw("95%"),
+    width: vw("100%"),
     height: vh("15%"),
-    borderRadius: 15,
     display: "flex",
     flexDirection: "column",
-    borderWidth: 1,
-    borderColor: "black",
     justifyContent: "left",
     alignItems: "center",
     position: "relative",
     overflow: 'hidden',
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
   },
   topSection: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f3b944",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     flex: 1.25,
   },
   bottomSection: {
@@ -149,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CouponItem;
+export default CouponForFeed;

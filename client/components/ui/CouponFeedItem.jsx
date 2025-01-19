@@ -15,11 +15,13 @@ import {
 import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
+import CouponForFeed from "./CouponForFeed";
 
 // icons
 import Comment from "../../assets/icons/Comment";
 import Reply from "../../assets/icons/Reply";
 import { Lora_500Medium } from "@expo-google-fonts/dev";
+import CouponItem from "./CouponItem";
 
 const CouponFeedItem = () => {
   return (
@@ -34,20 +36,9 @@ const CouponFeedItem = () => {
       />
 
       <View style={styles.coupon_container}>
-        <View style={styles.coupon_logo} />
-        <View style={styles.coupon_description}>
-          <Text style={styles.coupon_food_item}>Chicken Wings</Text>
-          <Pressable style={styles.claim_coupon_btn}>
-            <Text style={styles.claim_coupon_btn_txt}>
-              Buy One Basket Get One 50% Off
-            </Text>
-          </Pressable>
-          <Text>
-            Duration:{" "}
-            <Text style={{ fontWeight: "bold" }}>12 days left...</Text>
-          </Text>
-        </View>
+        <CouponForFeed />
       </View>
+    
 
       <View style={styles.comment_reply_container}>
         <Comment width={30} height={30} color={"black"} />
@@ -79,9 +70,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 5,
+    marginTop: 50,
     marginBottom: 5,
-    gap: 15,
+    gap: 5,
   },
   profile_img: {
     backgroundColor: "gray",
@@ -93,20 +84,13 @@ const styles = StyleSheet.create({
     width: vw("100%"), // Full screen width
     height: "60%", // Allow height to adjust automatically
     resizeMode: "stretch",
+    marginTop: 5,
   },
   coupon_container: {
     width: vw("100%"),
     height: "15%",
     display: "flex",
-    gap: 15,
     flexDirection: "row",
-    borderBottomLeftRadius: 35,
-    borderBottomRightRadius: 35,
-    backgroundColor: "#FFF0E2",
-    borderColor: "black",
-    borderBottomWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
     justifyContent: "center",
     alignItems: "center",
   },

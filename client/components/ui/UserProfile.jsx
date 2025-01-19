@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: "15%"
   },
   profileHeader: {
     backgroundColor: "white",
@@ -254,7 +255,6 @@ const styles = StyleSheet.create({
     marginTop: vh("2%"),
     gap: vw("10%"),
   },
-
   influencerStats: {
     width: "100%",
     position: "absolute",
