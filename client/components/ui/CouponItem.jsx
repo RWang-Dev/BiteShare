@@ -34,7 +34,6 @@ const CouponItem = (props) => {
     dispatch(setID(key));
   };
 
-<<<<<<< HEAD:client/components/ui/CouponItem.jsx
   return (
     <View style={styles.main}>
       <View style={styles.couponLogo} />
@@ -50,37 +49,6 @@ const CouponItem = (props) => {
       >
         <RightArrow width={30} height={30} color={"black"} />
       </Pressable>
-=======
-const CouponItem = ({style, width = vw("95%")}) => {
-    {/* Replace with redeem functionality */}
-    const handlePress = () => {
-      Alert.alert("Coupon redeemed")
-    }
-
-  return (
-    <View style={styles.main}>
-      
-      {/* Top Section */}
-      <View style={styles.topSection}>
-      <View style={styles.couponLogo}>
-        <Image source={require('../../assets/images/jakeenos-logo.jpeg')} style={styles.couponLogo}>
-        </Image>
-      </View>
-      <View style={{alignItems:"center"}}>
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Chicken Wings</Text>
-        <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
-      </View>
-      </View>
-      
-      {/* Bottom Section */}
-      <View style={styles.bottomSection}>
-        <Pressable style={styles.redeemIcon} onPress={handlePress}>
-        <Text style={styles.redeemText}>Redeem</Text>
-        </Pressable>
-        <Text style={styles.expirationText}>Expires 01/31/2025</Text>
-      </View>
-
->>>>>>> 75bddfd (Re-Designed coupons and coupon feed.):app/components/CouponItem.jsx
     </View>
   );
 };

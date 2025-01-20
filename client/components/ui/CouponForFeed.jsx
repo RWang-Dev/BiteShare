@@ -18,7 +18,7 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 
 // icons
-import RightArrow from "../icons/RightArrow";
+// import RightArrow from "../../icons/RightArrow";
 
 const CouponForFeed = () => {
     {/* Replace with redeem functionality */}
