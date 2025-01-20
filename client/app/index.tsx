@@ -153,7 +153,8 @@ const App: React.FC = () => {
             // onPress={() => authenticateUser("instagram")}
             onPress={() => {
               console.log("Instagram Login");
-              promptInstagram();
+              // promptInstagram();
+              navigation.navigate("CreateProfile" as never);
             }}
             style={styles.loginItemBtn}
           >
@@ -169,7 +170,8 @@ const App: React.FC = () => {
             // onPress={() => authenticateUser("google-oauth2")}
             onPress={() => {
               console.log("Google Login");
-              promptGoogle();
+              // promptGoogle();
+              navigation.navigate("CreateProfile" as never);
             }}
             style={styles.loginItemBtn}
           >
@@ -187,7 +189,8 @@ const App: React.FC = () => {
             // onPress={() => authenticateUser("apple")}
             onPress={() => {
               console.log("Apple Login");
-              promptApple();
+              // promptApple();
+              navigation.navigate("CreateProfile" as never);
             }}
             style={styles.loginItemBtn}
           >
