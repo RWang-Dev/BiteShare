@@ -4,8 +4,9 @@ import React, {
   useRef,
   useMemo,
   useCallback,
+  FC,
 } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Region } from "react-native-maps";
 import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MagnifyingGlass from "../../assets/icons/MagnifyingGlass";
@@ -17,7 +18,6 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid";
 import {
   widthPercentageToDP as vw,
   heightPercentageToDP as vh,
@@ -27,31 +27,55 @@ import * as Location from "expo-location";
 import LocationDot from "../../assets/icons/LocationDot";
 import LocationArrow from "../../assets/icons/LocationArrow";
 import CouponBottomSheetItem from "./CouponBottomSheetItem";
-import { GOOGLE_MAPS_API_KEY } from "../../Keys";
+import GOOGLE_MAPS_API_KEY from "@/Keys";
 
 // Redux
 import {
   setSelectedMarker,
   setLocation,
   setRegion,
-  setSearchQuery,
   setMarkers,
 } from "@/store/slices/couponMap";
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 
-export default function CouponMap() {
-  const selectedMarker = useSelector((state) => state.couponMap.selectedMarker);
-  const location = useSelector((state) => state.couponMap.location);
+type LocationType = {
+  coords: {
+    latitude: number;
+    longitude: number;
+  };
+};
+
+type MarkerType = {
+  id: string;
+  name: string;
+  description: string;
+  coordinate: {
+    latitude: number;
+    longitude: number;
+  };
+};
+const CouponMap: FC = () => {
+  // const GOOGLE_MAPS_API_KEY = "AIzaSyAYOoMzREk0iSjhjIgzVTlPB5fWURSY4Fg";
+  const selectedMarker = useAppSelector(
+    (state) => state.couponMap.selectedMarker as MarkerType | null
+  );
+  const location = useAppSelector(
+    (state) => state.couponMap.location as LocationType | null
+  );
   // const [location, setLocation] = useState(null);
-  const region = useSelector((state) => state.couponMap.region);
-  const markers = useSelector((state) => state.couponMap.markers);
+  const region = useAppSelector(
+    (state) => state.couponMap.region as Region | null | undefined
+  );
+  const markers = useAppSelector(
+    (state) => state.couponMap.markers as MarkerType[] | null
+  );
   const [load, setLoad] = useState(true);
   const [offCenter, setOffCenter] = useState(false);
 
-  const mapRef = useRef(null);
-  const bottomSheetModalRef = useRef(null);
+  const mapRef = useRef(null) as any;
+  const bottomSheetModalRef = useRef(null) as any;
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleDismiss = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -61,6 +85,7 @@ export default function CouponMap() {
   useEffect(() => {
     // console.log("DEFAULT MARKERS: ", markers[0], markers.length);
     console.log("LOCATION INIT: ", location);
+    console.log("Google maps API: ", GOOGLE_MAPS_API_KEY);
     if (!location) {
       getLocation();
     } else {
@@ -86,7 +111,7 @@ export default function CouponMap() {
   useEffect(() => {
     if (location && load) {
       setLoad(false);
-      if (markers.length > 0) {
+      if (!markers || markers.length > 0) {
         return;
       }
       dispatch(
@@ -122,7 +147,7 @@ export default function CouponMap() {
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync(); // Ensure correct permissions API
     if (status !== "granted") {
-      Alert.alert(
+      console.log(
         "Permission Denied",
         "Location permission is required to use this feature."
       );
@@ -136,7 +161,7 @@ export default function CouponMap() {
     dispatch(setLocation(currentLocation));
   };
 
-  const fetchNearbyRestaurants = async (lat, lng) => {
+  const fetchNearbyRestaurants = async (lat: number, lng: number) => {
     // Handle the search logic here, e.g., call an API to fetch results
     console.log("fetching nearby food");
     try {
@@ -146,7 +171,7 @@ export default function CouponMap() {
       const data = await response.json();
       if (data.results) {
         // Create marker data for the places returned
-        const newMarkers = data.results.map((place) => ({
+        const newMarkers = data.results.map((place: any) => ({
           id: place.place_id,
           name: place.name,
           description: place.vicinity,
@@ -182,15 +207,13 @@ export default function CouponMap() {
         {selectedMarker ? (
           getCouponsByRestaurant().map((coupon) => coupon)
         ) : (
-          <Text style={styles.noMarkerSelected}>
-            Select a marker to view details
-          </Text>
+          <Text>Select a marker to view details</Text>
         )}
       </BottomSheetScrollView>
     );
   };
 
-  const regionsAreEqual = (region1, region2) => {
+  const regionsAreEqual = (region1: Region, region2: Region) => {
     return (
       Math.abs(region1.latitude - region2.latitude) < 0.0001 &&
       Math.abs(region1.longitude - region2.longitude) < 0.0001 &&
@@ -202,8 +225,8 @@ export default function CouponMap() {
   const centerRegion = () => {
     dispatch(
       setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location ? location.coords.latitude : 44.9778,
+        longitude: location ? location.coords.longitude : 93.265,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       })
@@ -281,14 +304,10 @@ export default function CouponMap() {
                 elevation: 10, // This is important for Android
               },
             }}
-          >
-            <View
-              style={styles.searchBarIconContainer}
-              onPress={() => console.log("pressing search container")}
-            >
-              <MagnifyingGlass height={25} width={25} color={"white"} />
-            </View>
-          </GooglePlacesAutocomplete>
+          />
+          <View style={styles.searchBarIconContainer}>
+            <MagnifyingGlass height={25} width={25} color={"white"} />
+          </View>
           <Pressable
             style={({ pressed }) => [
               styles.couponsNearbyBtn,
@@ -297,15 +316,17 @@ export default function CouponMap() {
                 borderWidth: pressed ? 1 : 0,
               }, // Change background color when pressed
             ]}
-            onPressOut={() =>
-              fetchNearbyRestaurants(region.latitude, region.longitude)
-            }
+            onPressOut={() => {
+              const lat = region ? region.latitude : 44.9778;
+              const lng = region ? region.longitude : 93.265;
+              fetchNearbyRestaurants(lat, lng);
+            }}
           >
             <Text style={{ textAlign: "center" }}>Coupons Nearby</Text>
           </Pressable>
         </View>
 
-        {location && !load ? (
+        {location && !load && region ? (
           <MapView
             ref={mapRef}
             style={styles.map}
@@ -366,7 +387,7 @@ export default function CouponMap() {
       </View>
     </GestureHandlerRootView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   modalBackground: {
@@ -503,3 +524,5 @@ const styles = StyleSheet.create({
     borderRadius: 12.5,
   },
 });
+
+export default CouponMap;
