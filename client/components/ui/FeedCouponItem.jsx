@@ -32,7 +32,9 @@ const CouponForFeed = () => {
       {/* Top Section */}
       <View style={styles.topSection}>
       <View style={styles.couponLogo}>
-        <Image source={require('../../assets/images/jakeenos-logo.jpeg')} style={styles.couponLogo}>
+        <Image source={require('../../assets/images/jakeenos-logo.png')} 
+        style={styles.couponLogo}
+        resizeMode="contain">
         </Image>
       </View>
       <View style={{alignItems:"center"}}>
@@ -64,9 +66,13 @@ const styles = StyleSheet.create({
     justifyContent: "left",
     alignItems: "center",
     position: "relative",
-    overflow: 'hidden',
+    // overflow: 'hidden',
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
+    shadowColor: "#E7630A",
+    shadowOpacity: 0.75,
+    shadowOffset: {width:0, height:2},
+    marginBottom: "2.5%",
   },
   topSection: {
     width: "100%",
@@ -88,19 +94,22 @@ const styles = StyleSheet.create({
     padding:0,
   },
   couponLogo: {
-    width: 60,
-    height: 60,
+    width: vw("15%"),
+    height: vh("15%"),
     borderRadius: 30,
-    marginRight: 50,
-    margin: 10,
+    marginRight: "10%",
+    margin: "5%",
     justifyContent: 'center',
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowOffset: {width:0, height:2},
   },
   redeemIcon: {
     backgroundColor: "#e7630a",
     marginLeft: "5%",
     borderRadius: 20,
     fontSize: 18,
-    padding: 10,
+    padding: "2.5%",
     width: "30%",
   },
   redeemText: {

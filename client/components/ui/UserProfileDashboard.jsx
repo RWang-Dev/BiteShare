@@ -19,20 +19,31 @@ const UserProfileDashboard = () => {
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.settingsHeader}>My Dashboard</Text>
+
+      {/*User Stats Section*/}
       <View style={styles.dashboardStats}>
         <View style={styles.statItem}>
           <Text style={styles.statTxtLeft}>Total Coupons Claimed</Text>
           <Text style={styles.statTxtRight}>487</Text>
         </View>
+
         <View style={styles.statItem}>
           <Text style={styles.statTxtLeft}>Total Coupons Used</Text>
           <Text style={styles.statTxtRight}>358</Text>
         </View>
+
+        <View style={styles.statItem}>
+          <Text style={styles.statTxtLeft}>Total Coupons Available</Text>
+          <Text style={styles.statTxtRight}>129</Text>
+        </View>
+
         <View style={styles.statItem}>
           <Text style={styles.statTxtLeft}>Total Money Earned</Text>
           <Text style={styles.statTxtRight}>$999,999</Text>
         </View>
       </View>
+
+      {/*Deals Section*/}
       <Text style={styles.settingsHeader}>Deals to Promote</Text>
       <ScrollView contentContainerStyle={styles.dealsScroll}>
         {coupons.map((coupon) => coupon)}
@@ -51,32 +62,39 @@ const styles = StyleSheet.create({
     marginBottom: "2%",
   },
   dashboardStats: {
-    display: "flex",
-    width: "100%",
-    paddingLeft: 20,
-    paddingRight: 20,
     flexDirection: "column",
-    gap: 5,
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
   statItem: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "row",
+    flex:1,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
     alignItems: "center",
-    width: "100%",
-    height: 30,
+    shadowColor: "#E7630A",
+    shadowOpacity: 0.5,
+    shadowOffset: {width:0, height:2},
+    margin: 5,
+    marginLeft: 15,
+    marginRight:15,
+    justifyContent: "center",
   },
   statTxtLeft: {
     position: "absolute",
     left: 0,
     fontWeight: "bold",
     fontSize: 16,
+    margin: 5,
+    marginLeft: 20,
   },
   statTxtRight: {
     position: "absolute",
     right: 0,
     fontWeight: "bold",
     fontSize: 14,
+    margin: 5,
+    marginRight: 20,
   },
   dealsScroll: {
     display: "flex",

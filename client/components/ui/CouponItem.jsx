@@ -35,21 +35,31 @@ const CouponItem = (props) => {
   };
 
   return (
-    <View style={styles.main}>
-      <View style={styles.couponLogo} />
-      <View style={styles.couponDescription}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>{props.item}</Text>
-        <Text style={{ fontSize: 16 }}>{props.description}</Text>
+      <View style={styles.main}>
+        
+        {/* Top Section */}
+        <View style={styles.topSection}>
+        <View style={styles.couponLogo}>
+          <Image source={require('../../assets/images/jakeenos-logo.png')} 
+          style={styles.couponLogo}
+          resizeMode="contain">
+          </Image>
+        </View>
+        <View style={{alignItems:"center"}}>
+          <Text style={{ fontWeight: "bold", fontSize: 20 }}>Chicken Wings</Text>
+          <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
+        </View>
+        </View>
+        
+        {/* Bottom Section */}
+        <View style={styles.bottomSection}>
+          <Pressable style={styles.redeemIcon}>
+          <Text style={styles.redeemText}>Claim</Text>
+          </Pressable>
+          <Text style={styles.expirationText}>Expires 01/31/2025</Text>
+        </View>
+  
       </View>
-      <Pressable
-        style={styles.redeemIcon}
-        onPressOut={() => {
-          redeemCoupon(props.id);
-        }}
-      >
-        <RightArrow width={30} height={30} color={"black"} />
-      </Pressable>
-    </View>
   );
 };
 
@@ -57,17 +67,20 @@ const CouponItem = (props) => {
 const styles = StyleSheet.create({
   main: {
     backgroundColor: "#FFF3E2",
-    width: vw("95%"),
+    width: vw("92.5%"),
     height: vh("15%"),
     borderRadius: 15,
     display: "flex",
     flexDirection: "column",
-    borderWidth: 1,
-    borderColor: "black",
+    // borderWidth: 1,
+    // borderColor: "black",
     justifyContent: "left",
     alignItems: "center",
     position: "relative",
-    overflow: 'hidden',
+    //overflow: 'hidden',
+    shadowColor: "#E7630A",
+    shadowOpacity: 0.75,
+    shadowOffset: {width:0, height:2},
   },
   topSection: {
     width: "100%",
@@ -91,19 +104,22 @@ const styles = StyleSheet.create({
     padding:0,
   },
   couponLogo: {
-    width: 60,
-    height: 60,
+    width: vw("15%"),
+    height: vh("15%"),
     borderRadius: 30,
-    marginRight: 50,
-    margin: 10,
+    marginRight: "10%",
+    margin: "5%",
     justifyContent: 'center',
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowOffset: {width:0, height:2},
   },
   redeemIcon: {
     backgroundColor: "#e7630a",
     marginLeft: "5%",
     borderRadius: 20,
     fontSize: 18,
-    padding: 10,
+    padding: "2.5%",
     width: "30%",
   },
   redeemText: {

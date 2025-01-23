@@ -15,7 +15,7 @@ import {
 import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
-import CouponForFeed from "./CouponForFeed";
+import CouponForFeed from "./FeedCouponItem";
 
 // icons
 import Comment from "../../assets/icons/Comment";

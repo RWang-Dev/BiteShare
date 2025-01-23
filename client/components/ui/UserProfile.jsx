@@ -97,20 +97,7 @@ const UserProfile = () => {
             </View>
           </View>
         ) : null}
-        <View style={styles.profileStats}>
-          <View style={styles.profileStatsItem}>
-            <Text style={{ fontWeight: "bold" }}>36</Text>
-            <Text style={{ fontWeight: "bold" }}>Coupons Used</Text>
-          </View>
-          <View style={styles.profileStatsItem}>
-            <Text style={{ fontWeight: "bold" }}>4</Text>
-            <Text style={{ fontWeight: "bold" }}>Coupons</Text>
-          </View>
-          <View style={styles.profileStatsItem}>
-            <Text style={{ fontWeight: "bold" }}>$144</Text>
-            <Text style={{ fontWeight: "bold" }}>Savings</Text>
-          </View>
-        </View>
+      
       </View>
       <View style={styles.contentSection}>
         <View style={styles.profileTabsContainer}>
