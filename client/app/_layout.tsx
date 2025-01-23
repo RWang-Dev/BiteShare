@@ -47,6 +47,8 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="CreateProfile" options={{ headerShown: false }} />
           <Stack.Screen name="MainLayout" options={{ headerShown: false }} />
+          <Stack.Screen name="VerifyPhone" options={{ headerShown: false }} />
+
           <Stack.Screen
             name="InfluencerApplication"
             options={{ headerShown: false }}

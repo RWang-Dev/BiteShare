@@ -33,6 +33,7 @@ yarn-error.*
 .env.development
 .env.test
 .env.production
+*.env
 
 # typescript
 *.tsbuildinfo
@@ -65,3 +66,5 @@ android/
 # Your custom ignores
 app-example
 Keys.jsx
+firebaseAccountKey.json
+firebaseConfig.js

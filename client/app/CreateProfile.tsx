@@ -24,10 +24,9 @@ import BackButton from "../assets/icons/BackButton";
 import DefaultUser from "../assets/icons/DefaultUser";
 import XButton from "../assets/icons/XButton";
 
-import axios from "axios";
-
 // server
 import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
 
 // redux
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
@@ -96,59 +95,58 @@ const CreateProfile: FC = () => {
   };
 
   const removeImg = () => {
+    console.log("removing IMage");
     dispatch(setImage(null));
   };
 
   return (
     <View style={styles.main}>
-      <Link href="/" style={styles.back_button} asChild>
-        <Pressable>
-          <BackButton width={vw("7%")} height={vh("7%")} color={"#D26E22"} />
-        </Pressable>
-      </Link>
+      <Pressable
+        style={styles.back_button}
+        onPressOut={() => navigation.goBack()}
+      >
+        <BackButton width={30} height={30} color={"#ff7b00"} />
+      </Pressable>
       <Text style={styles.title}>Create Your Profile</Text>
 
       <View style={styles.image_container}>
         {image ? (
           <Pressable onPress={removeImg} style={styles.remove_img_btn}>
-            <XButton width={15} height={15} color={"black"} />
+            <XButton width={15} height={15} color={"gray"} />
           </Pressable>
         ) : null}
-        <View style={styles.center_circle}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.profileImage} />
-          ) : (
-            <Image
-              source={require("../assets/images/user.png")}
-              style={styles.user_default}
-            />
-          )}
-        </View>
+        {image ? (
+          <Image source={{ uri: image }} style={styles.profileImage} />
+        ) : (
+          <Image
+            source={require("../assets/images/user.png")}
+            style={styles.user_default}
+          />
+        )}
       </View>
 
-      <Pressable
-        style={({ pressed }) => [
-          styles.add_picture,
-          { backgroundColor: pressed ? "#A6A6A6" : "#E9E9E9" }, // Change background color when pressed
-        ]}
-        onPress={pickImage}
-      >
-        <Text style={styles.center_text}>Add Image</Text>
-      </Pressable>
-      <View>
+      <View style={styles.inputsContainer}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.add_picture,
+            { backgroundColor: pressed ? "#E9E9E9" : "white" }, // Change background color when pressed
+          ]}
+          onPress={pickImage}
+        >
+          <Text style={styles.center_text}>Add Image</Text>
+        </Pressable>
         <TextInput
-          placeholder="Enter your username ..."
+          placeholder="Username"
           style={styles.username_input}
           onChangeText={(text) => dispatch(setUsername(text))}
           value={username}
         />
-        <View />
       </View>
 
       <Pressable
         style={({ pressed }) => [
           styles.submit_button,
-          { backgroundColor: pressed ? "#B6632D" : "#DB7634" }, // Change background color when pressed
+          { backgroundColor: pressed ? "#E16C00" : "#ff7b00" }, // Change background color when pressed
         ]}
         onPress={handleSubmit}
       >
@@ -165,12 +163,13 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "white",
+    paddingTop: vh("5%"),
   },
   back_button: {
     alignSelf: "flex-start",
-    marginLeft: 15,
-    marginTop: 0,
+    position: "absolute",
+    left: 15,
+    top: 15,
   },
   user_default: {
     width: vw("49%"),
@@ -190,39 +189,42 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 800,
-    color: "#E7630A",
+    color: "#ff7b00",
     // marginTop: vh("2%"),
     fontFamily: "Roboto_400Regular",
   },
   add_picture: {
-    backgroundColor: "#E9E9E9",
-    borderRadius: 20,
-    width: vw("65%"),
-    height: 40,
+    // backgroundColor: "#E9E9E9",
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    width: "100%",
+    height: "50%",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: vh("5%"),
   },
 
   username_input: {
-    backgroundColor: "#E9E9E9",
-    borderRadius: 5,
-    width: vw("65%"),
-    height: 40,
+    backgroundColor: "#F9FAF9",
+    width: "100%",
+    height: "50%",
     justifyContent: "center",
     alignItems: "center",
     paddingLeft: 20,
-    marginTop: vh("2%"),
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    fontSize: 16,
+    fontWeight: 400,
   },
 
   submit_button: {
-    backgroundColor: "#DB7634",
-    borderRadius: 20,
-    width: vw("65%"),
-    height: 40,
+    width: "80%",
+    height: 50,
+    backgroundColor: "#ff7b00",
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: vh("5%"),
+    marginTop: vh("4%"),
+    borderRadius: 10,
   },
   submit_button_txt: {
     textAlign: "center",
@@ -251,8 +253,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    top: 20,
-    right: 20,
+    top: 10,
+    right: 10,
   },
 
   image_container: {
@@ -261,6 +263,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: vw("60%"),
     height: vw("60%"),
+    pointerEvents: "box-none",
+  },
+
+  inputsContainer: {
+    width: "85%",
+    height: 125,
+    borderRadius: 20,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#A1A1A1", // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Horizontal and vertical offset
+    shadowOpacity: 0.1, // Light shadow opacity for a subtle effect
+    shadowRadius: 20, // Softens the shadow edges
+    elevation: 5, // Adds shadow on Android
+    backgroundColor: "white",
+    margin: 0,
+    padding: 0,
   },
 });
 
