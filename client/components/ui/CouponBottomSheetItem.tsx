@@ -1,4 +1,4 @@
-import React, { userState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -94,10 +94,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     backgroundColor: "#FFF0E2",
-    // borderColor: "black",
-    // borderTopWidth: 1,
-    // borderLeftWidth: 1,
-    // borderRightWidth: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 5,

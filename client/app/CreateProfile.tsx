@@ -41,7 +41,7 @@ const CreateProfile: FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/test`);
+      const response = await axios.get(`${API_BASE_URL}/test`);
       console.log(response.data);
       setBackendData(response.data);
     } catch (error) {

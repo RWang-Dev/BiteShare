@@ -1,4 +1,4 @@
-import React, { userState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -20,15 +20,20 @@ import CommentItem from "./CommentItem";
 import RightArrow from "../../assets/icons/RightArrow";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setActive, setID } from "@/store/slices/couponRedemption";
 
-const CouponItem = (props) => {
-  const active = useSelector((state) => state.couponRedemption.active);
-  const ID = useSelector((state) => state.couponRedemption.ID);
-  const dispatch = useDispatch();
+interface CouponItemProps {
+  item: string;
+  description: string;
+  id: number;
+}
+const CouponItem = (props: CouponItemProps) => {
+  const active = useAppSelector((state) => state.couponRedemption.active);
+  const ID = useAppSelector((state) => state.couponRedemption.ID);
+  const dispatch = useAppDispatch();
 
-  const redeemCoupon = (key) => {
+  const redeemCoupon = (key: number) => {
     dispatch(setActive(true));
     dispatch(setID(key));
   };
@@ -36,7 +41,7 @@ const CouponItem = (props) => {
   return (
     <View style={styles.main}>
       <View style={styles.couponLogo} />
-      <View style={styles.couponDescription}>
+      <View>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>{props.item}</Text>
         <Text style={{ fontSize: 16 }}>{props.description}</Text>
       </View>
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderWidth: 1,
     borderColor: "black",
-    justifyContent: "left",
+    // justifyContent: "left",
     alignItems: "center",
     position: "relative",
     paddingLeft: 10,

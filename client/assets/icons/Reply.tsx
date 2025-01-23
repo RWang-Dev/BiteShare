@@ -6,7 +6,6 @@ interface ReplyProps {
   width: number;
   height: number;
   color: string;
-  strokeWidth: number;
 }
 
 const Reply = (props: ReplyProps) => {
@@ -17,7 +16,7 @@ const Reply = (props: ReplyProps) => {
       height={props.height || 800}
       fill="none"
       stroke={props.color || "#000000"} // Default stroke color
-      strokeWidth={props.strokeWidth || 30} // Adjust as desired
+      strokeWidth={30} // Adjust as desired
       strokeLinecap="round"
       strokeLinejoin="round"
     >

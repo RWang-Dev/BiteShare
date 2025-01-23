@@ -3,12 +3,12 @@ import { Link, Redirect, useNavigation } from "expo-router";
 import React from "react";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUserType } from "@/store/slices/userProfile";
 
 const UserProfileSettings = () => {
-  const userType = useSelector((state) => state.userProfile.userType);
-  const dispatch = useDispatch();
+  const userType = useAppSelector((state) => state.userProfile.userType);
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
 
   return (
@@ -21,7 +21,9 @@ const UserProfileSettings = () => {
               styles.influencerApplicationBtn,
               { backgroundColor: pressed ? "#A6A6A6" : "#EBEBEB" }, // Change background color when pressed
             ]}
-            onPressOut={() => navigation.navigate("InfluencerApplication")}
+            onPressOut={() =>
+              navigation.navigate("InfluencerApplication" as never)
+            }
           >
             <Text>Apply to be an influencer</Text>
           </Pressable>

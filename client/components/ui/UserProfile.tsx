@@ -29,16 +29,16 @@ import DefaultUser from "../../assets/icons/DefaultUser";
 import Profile from "../../assets/icons/Profile";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setTab, setUserType } from "@/store/slices/userProfile";
 import { setActive, setID } from "@/store/slices/couponRedemption";
 
 const UserProfile = () => {
-  const profileTab = useSelector((state) => state.userProfile.profileTab); // "Coupon", "Map", "Profile" states
-  const userType = useSelector((state) => state.userProfile.userType);
-  const active = useSelector((state) => state.couponRedemption.active);
-  const ID = useSelector((state) => state.couponRedemption.ID);
-  const dispatch = useDispatch();
+  const profileTab = useAppSelector((state) => state.userProfile.profileTab); // "Coupon", "Map", "Profile" states
+  const userType = useAppSelector((state) => state.userProfile.userType);
+  const active = useAppSelector((state) => state.couponRedemption.active);
+  const ID = useAppSelector((state) => state.couponRedemption.ID);
+  const dispatch = useAppDispatch();
 
   const TABS = {
     COUPON: "Coupon",
