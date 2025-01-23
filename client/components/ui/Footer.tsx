@@ -1,4 +1,4 @@
-import React, { userState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -21,12 +21,12 @@ import Location from "../../assets/icons/Location";
 import Profile from "../../assets/icons/Profile";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setTab } from "@/store/slices/mainLayout";
 
-const Footer = (props) => {
-  const pageTab = useSelector((state) => state.mainLayout.tab);
-  const dispatch = useDispatch();
+const Footer = () => {
+  const pageTab = useAppSelector((state) => state.mainLayout.tab);
+  const dispatch = useAppDispatch();
 
   return (
     <View style={styles.footer_container}>

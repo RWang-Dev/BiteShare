@@ -80,6 +80,7 @@ const App: React.FC = () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/test-db`);
       console.log(response.data);
+      (navigation.navigate as any)("VerifyPhone", { verificationId });
     } catch (error) {
       console.error(error);
     }

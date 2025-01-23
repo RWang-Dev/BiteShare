@@ -5,8 +5,13 @@ import {
   heightPercentageToDP as vh,
 } from "react-native-responsive-screen";
 
-const CommentItem = (props) => {
-  const truncateComment = (comment, num_chars) => {
+interface CommentItemProps {
+  username: string;
+  comment: string;
+}
+
+const CommentItem = (props: CommentItemProps) => {
+  const truncateComment = (comment: string, num_chars: number) => {
     let result = "";
     if (num_chars >= comment.length) {
       return comment;

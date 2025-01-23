@@ -1,6 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface InfluencerApplicationState {
+  username: string;
+}
+
+const initialState: InfluencerApplicationState = {
   username: "",
 };
 
@@ -8,7 +12,7 @@ const influencerApplicationSlice = createSlice({
   name: "influencerApplication",
   initialState,
   reducers: {
-    setUsername: (state, action) => {
+    setUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
     },
   },

@@ -1,18 +1,22 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface RedemptionState {
+  active: boolean;
+  ID: number | null;
+}
+const initialState: RedemptionState = {
   active: false,
-  ID: "",
+  ID: null,
 };
 
 const couponRedemptionSlice = createSlice({
   name: "couponRedemption",
   initialState,
   reducers: {
-    setActive: (state, action) => {
+    setActive: (state, action: PayloadAction<boolean>) => {
       state.active = action.payload;
     },
-    setID: (state, action) => {
+    setID: (state, action: PayloadAction<number | null>) => {
       state.ID = action.payload;
     },
   },

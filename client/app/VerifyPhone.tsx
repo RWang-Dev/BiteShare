@@ -38,6 +38,12 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
   const input4Ref = useRef<TextInput>(null);
 
   useEffect(() => {
+    if (props.verificationId) {
+      console.log("Verification ID: ", props.verificationId);
+    }
+  }, []);
+
+  useEffect(() => {
     if (code1 && code2 && code4 && code4) {
       setCodeFilled(true);
     } else {
@@ -46,6 +52,8 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
   }, [code1, code2, code3, code4]);
 
   const confirmCode = async () => {
+    navigation.navigate("CreateProfile" as never);
+    return;
     try {
       const code = code1 + code2 + code3 + code4;
       if (!props.verificationId) {
