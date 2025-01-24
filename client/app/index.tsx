@@ -50,40 +50,61 @@ const AUTH0_CLIENT_ID = "2Wg8giThjtn0seet8S4Vkt5NvbcZNMfz";
 
 const App: React.FC = () => {
   // const [phoneNumber, setPhoneNumber] = useState("");
+  const auth = getAuth(firebaseApp);
+  auth.settings.appVerificationDisabledForTesting = true;
+
   const phoneInput = useRef<PhoneInput>(null);
   const [number, setNumber] = useState("");
   const [formattedNumber, setFormattedNumber] = useState("");
-
-  const [verificationId, setVerificationId] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+
+  useEffect(() => {
+    checkUserAuth();
+  }, []);
 
   const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal | null>(null);
 
-  const auth = getAuth(firebaseApp);
   const navigation = useNavigation();
 
-  const sendVerification = async () => {
-    // try {
-    //   // 'verifyPhoneNumber' requires a PhoneAuthProvider instance
-    //   const phoneProvider = new PhoneAuthProvider(auth);
-    //   const id = await phoneProvider.verifyPhoneNumber(
-    //     formattedNumber,
-    //     recaptchaVerifier.current!
-    //   );
-    //   setVerificationId(id);
-    //   alert("Verification code has been sent to your phone.");
-    //   navigation.navigate(["VerifyPhone", { verificationId }] as never);
-    // } catch (err) {
-    //   console.error("Error sending verification code:", err);
-    //   alert("Failed to send verification code");
-    // }
-    try {
-      const response = await axios.get(`${API_BASE_URL}/test-db`);
-      console.log(response.data);
-      (navigation.navigate as any)("VerifyPhone", { verificationId });
-    } catch (error) {
-      console.error(error);
+  const checkUserAuth = async () => {
+    if (auth.currentUser) {
+      try {
+        const user = auth.currentUser;
+        const response = await axios.get(`${API_BASE_URL}/users/${user.uid}`);
+        if (response.data.username) {
+          navigation.navigate("MainLayout" as never);
+        } else {
+          navigation.navigate("CreateProfile" as never);
+        }
+      } catch (error) {
+        console.error("Error checking user authentication: ", error);
+      }
+    } else {
+      console.log("No authenticated user found.");
     }
+  };
+
+  const sendVerification = async () => {
+    try {
+      // 'verifyPhoneNumber' requires a PhoneAuthProvider instance
+      const phoneProvider = new PhoneAuthProvider(auth);
+      console.log("SENDING VERIFICATION TO NUMBER: ", formattedNumber);
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        formattedNumber,
+        recaptchaVerifier.current!
+      );
+      // setVerificationId(id);
+      console.log("VERIFICATION ID: ", verificationId);
+
+      alert("Verification code has been sent to your phone.");
+      (navigation.navigate as any)("VerifyPhone", {
+        verificationId: verificationId,
+      });
+    } catch (err) {
+      console.error("Error sending verification code:", err);
+      alert("Failed to send verification code");
+    }
+    // (navigation.navigate as any)("VerifyPhone", { verificationId });
   };
 
   return (
@@ -91,6 +112,7 @@ const App: React.FC = () => {
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
+        // attemptInvisibleVerification={true}
       />
       <Text style={styles.title}>BiteShare</Text>
       <View style={styles.center_circle}>

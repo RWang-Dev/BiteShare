@@ -19,6 +19,9 @@ import { Link, Redirect } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
 
+// auth
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 // icons
 import BackButton from "../assets/icons/BackButton";
 import DefaultUser from "../assets/icons/DefaultUser";
@@ -38,6 +41,16 @@ const CreateProfile: FC = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [backendData, setBackendData] = useState();
+  const auth = getAuth();
+
+  useEffect(() => {
+    fetchData();
+    if (auth) {
+      const user = auth.currentUser;
+      console.log("Current User: ", user);
+      console.log(user!.uid);
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -48,14 +61,6 @@ const CreateProfile: FC = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // useEffect(() => {
-  //   console.log("Username: ", username);
-  // }, [username]);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -79,7 +84,7 @@ const CreateProfile: FC = () => {
 
   const validateUsername = (username: string) => {
     if (username.length < 3) {
-      console.log("Username is too short");
+      alert("Username is too short");
       return false;
     }
 
@@ -87,7 +92,20 @@ const CreateProfile: FC = () => {
     console.log("Username is valid!");
     return true;
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    validateUsername(username);
+
+    try {
+      const user = auth.currentUser;
+      const uid = user!.uid;
+      const response = await axios.post(`${API_BASE_URL}/users`, {
+        uid,
+        username,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error saving user profile: ", error);
+    }
     console.log("Submitted profile for the following user: ");
     console.log({ username, image });
     navigation.navigate("MainLayout" as never);
