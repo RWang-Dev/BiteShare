@@ -27,7 +27,7 @@ import * as Location from "expo-location";
 import LocationDot from "../../assets/icons/LocationDot";
 import LocationArrow from "../../assets/icons/LocationArrow";
 import CouponBottomSheetItem from "./CouponBottomSheetItem";
-import GOOGLE_MAPS_API_KEY from "@/Keys";
+import { GOOGLE_MAPS_API_KEY } from "@/Keys";
 
 // Redux
 import {
