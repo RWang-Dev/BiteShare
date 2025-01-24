@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "expo-router";
+import { useRoute } from "@react-navigation/native";
 
 import {
   widthPercentageToDP as vw,
@@ -17,6 +18,10 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 
+// server
+import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
+
 interface VerifyPhoneProps {
   verificationId: string;
 }
@@ -27,6 +32,12 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
   const [code2, setCode2] = useState("");
   const [code3, setCode3] = useState("");
   const [code4, setCode4] = useState("");
+  const [code5, setCode5] = useState("");
+  const [code6, setCode6] = useState("");
+
+  const route = useRoute();
+  const { verificationId } = route.params as { verificationId: string };
+
   const [codeFilled, setCodeFilled] = useState(false);
   const navigation = useNavigation();
   const auth = getAuth();
@@ -36,35 +47,51 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
   const input2Ref = useRef<TextInput>(null);
   const input3Ref = useRef<TextInput>(null);
   const input4Ref = useRef<TextInput>(null);
+  const input5Ref = useRef<TextInput>(null);
+  const input6Ref = useRef<TextInput>(null);
 
   useEffect(() => {
-    if (props.verificationId) {
-      console.log("Verification ID: ", props.verificationId);
-    }
+    console.log("Verification ID VerifyPhone: ", verificationId);
   }, []);
 
   useEffect(() => {
-    if (code1 && code2 && code4 && code4) {
+    if (code1 && code2 && code4 && code4 && code5 && code6) {
       setCodeFilled(true);
     } else {
       setCodeFilled(false);
     }
-  }, [code1, code2, code3, code4]);
+  }, [code1, code2, code3, code4, code5, code6]);
+
+  const checkUserAuth = async () => {
+    if (auth.currentUser) {
+      try {
+        const user = auth.currentUser;
+        const response = await axios.get(`${API_BASE_URL}/users/${user.uid}`);
+        if (response.data.username) {
+          navigation.navigate("MainLayout" as never);
+        } else {
+          navigation.navigate("CreateProfile" as never);
+        }
+      } catch (error) {
+        console.error("Error checking user authentication: ", error);
+      }
+    } else {
+      console.log("No authenticated user found.");
+    }
+  };
 
   const confirmCode = async () => {
-    navigation.navigate("CreateProfile" as never);
-    return;
+    // navigation.navigate("CreateProfile" as never);
+    // return;
     try {
-      const code = code1 + code2 + code3 + code4;
-      if (!props.verificationId) {
+      const code = code1 + code2 + code3 + code4 + code5 + code6;
+      console.log("Verifying code: ", code);
+      if (!verificationId) {
         throw new Error("No verificationId found.");
       }
-      const credential = PhoneAuthProvider.credential(
-        props.verificationId,
-        code
-      );
+      const credential = PhoneAuthProvider.credential(verificationId, code);
       const userCredential = await signInWithCredential(auth, credential);
-      navigation.navigate("CreateProfile" as never);
+      await checkUserAuth();
       // userCredential.user has your user data
       // Navigate or store user in global state
     } catch (error) {
@@ -83,7 +110,7 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
       </Pressable>
       <Text style={styles.title}>Verify Your Phone</Text>
       <Text style={styles.subTitle}>
-        Enter the 4-digit code we sent to your phone:
+        Enter the 6-digit code we sent to your phone:
       </Text>
 
       <View style={styles.codeContainer}>
@@ -142,8 +169,38 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
           value={code4}
           onChangeText={(text) => {
             setCode4(text);
-            if (text.length === 0) {
+            if (text.length === 1) {
+              input5Ref.current?.focus();
+            } else {
               input3Ref.current?.focus();
+            }
+          }}
+          keyboardType="number-pad"
+          maxLength={1}
+        />
+        <TextInput
+          ref={input5Ref}
+          style={styles.codeInput}
+          value={code5}
+          onChangeText={(text) => {
+            setCode5(text);
+            if (text.length === 1) {
+              input6Ref.current?.focus();
+            } else {
+              input4Ref.current?.focus();
+            }
+          }}
+          keyboardType="number-pad"
+          maxLength={1}
+        />
+        <TextInput
+          ref={input6Ref}
+          style={styles.codeInput}
+          value={code6}
+          onChangeText={(text) => {
+            setCode6(text);
+            if (text.length === 0) {
+              input5Ref.current?.focus();
             }
           }}
           keyboardType="number-pad"
@@ -166,8 +223,11 @@ const VerifyPhone = (props: VerifyPhoneProps) => {
           }
         }}
         onPress={() => {
-          console.log("Code entered:", code1 + code2 + code3 + code4);
-          if (code1 && code2 && code3 && code4) {
+          console.log(
+            "Code entered:",
+            code1 && code2 && code3 && code4 && code6 && code6
+          );
+          if (code1 && code2 && code3 && code4 && code6 && code6) {
             confirmCode();
           } else {
             alert("Please enter the verification code");
@@ -219,10 +279,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   codeContainer: {
+    display: "flex",
+    gap: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     marginBottom: 40,
-    width: "80%",
+    width: "95%",
   },
   codeInput: {
     width: 50,
