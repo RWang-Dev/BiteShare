@@ -6,7 +6,7 @@ import React, {
   useCallback,
   FC,
 } from "react";
-import MapView, { Marker, Region } from "react-native-maps";
+import MapView, { Marker, Region, LatLng } from "react-native-maps";
 import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MagnifyingGlass from "../../assets/icons/MagnifyingGlass";
@@ -57,7 +57,7 @@ type MarkerType = {
 const CouponMap: FC = () => {
   // const GOOGLE_MAPS_API_KEY = "AIzaSyAYOoMzREk0iSjhjIgzVTlPB5fWURSY4Fg";
   const selectedMarker = useAppSelector(
-    (state) => state.couponMap.selectedMarker as MarkerType | null
+    (state) => state.couponMap.selectedMarker as MarkerType
   );
   const location = useAppSelector(
     (state) => state.couponMap.location as LocationType | null
@@ -67,7 +67,7 @@ const CouponMap: FC = () => {
     (state) => state.couponMap.region as Region | null | undefined
   );
   const markers = useAppSelector(
-    (state) => state.couponMap.markers as MarkerType[] | null
+    (state) => state.couponMap.markers as MarkerType[]
   );
   const [load, setLoad] = useState(true);
   const [offCenter, setOffCenter] = useState(false);
