@@ -97,21 +97,10 @@ const UserProfile = () => {
             </View>
           </View>
         ) : null}
-        <View style={styles.profileStats}>
-          <View style={styles.profileStatsItem}>
-            <Text style={{ fontWeight: "bold" }}>36</Text>
-            <Text style={{ fontWeight: "bold" }}>Coupons Used</Text>
-          </View>
-          <View style={styles.profileStatsItem}>
-            <Text style={{ fontWeight: "bold" }}>4</Text>
-            <Text style={{ fontWeight: "bold" }}>Coupons</Text>
-          </View>
-          <View style={styles.profileStatsItem}>
-            <Text style={{ fontWeight: "bold" }}>$144</Text>
-            <Text style={{ fontWeight: "bold" }}>Savings</Text>
-          </View>
-        </View>
+      
       </View>
+      <LinearGradient colors = {["white","#E7630A"]}
+      style={{ flex: 1}}>
       <View style={styles.contentSection}>
         <View style={styles.profileTabsContainer}>
           <Pressable
@@ -129,7 +118,7 @@ const UserProfile = () => {
                   : { textAlign: "center", color: "black" }
               }
             >
-              Coupons
+              My Coupons
             </Text>
           </Pressable>
 
@@ -194,13 +183,14 @@ const UserProfile = () => {
         </View>
         <View style={styles.profileTabComponents}>{renderContent()}</View>
       </View>
+       </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   main: {
-    backgroundColor: "#EBEBEB",
+    backgroundColor: "white",
     flex: 1,
   },
   popup: {
@@ -223,6 +213,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: "15%"
   },
   profileHeader: {
     backgroundColor: "white",
@@ -254,25 +245,6 @@ const styles = StyleSheet.create({
     marginTop: vh("2%"),
     gap: vw("10%"),
   },
-
-  influencerStats: {
-    width: "100%",
-    position: "absolute",
-    top: "20%",
-  },
-  influencerFollowers: {
-    position: "absolute",
-    left: "10%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  influencerLikes: {
-    position: "absolute",
-    right: "10%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   profileStatsItem: {
     display: "flex",
     flexDirection: "column",
@@ -280,42 +252,71 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  influencerStats: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: "2.5%",
+  },
+  influencerFollowers: {
+    marginHorizontal: "2.5%",
+  },
+  influencerLikes: {
+    marginHorizontal: "2.5%",
+  },
   contentSection: {
-    backgroundColor: "white",
-    marginTop: "1%",
+    //backgroundColor: "red",
     height: "65%",
     width: "100%",
+    flex: 1,
   },
   profileTabsContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 2,
   },
   profileTabDefault: {
-    backgroundColor: "#EBEBEB",
+    backgroundColor: "white",
     width: "30%",
-    height: 25,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
+    height: 30,
     display: "flex",
     flexShrink: 1,
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
+    borderRadius: 12,
+    borderBottomLeftRadius: 0, 
+    borderBottomRightRadius: 0,
+
+    shadowColor: "#E7630A",
+    shadowOpacity: 0.75,
+    shadowOffset: {width:0, height:2},
+    borderBottomLeftRadius: 0, 
+    borderBottomRightRadius: 0,
+
+    borderColor: "black",
+    borderWidth: 0.5,
   },
   profileTabActive: {
     backgroundColor: "#E7630A",
-    width: "30%",
-    height: 25,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
+    width: "32.5%",
+    height: 30,
     display: "flex",
     flexShrink: 1,
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
+    borderRadius: 12,
+
+    shadowColor: "#E7630A",
+    shadowOpacity: 0.75,
+    shadowOffset: {width:0, height:2},
+    borderBottomLeftRadius: 0, 
+    borderBottomRightRadius: 0,
+
+    borderColor: "black",
+    borderWidth: 0.5,
   },
   profileTabComponents: {
     flex: 1,
