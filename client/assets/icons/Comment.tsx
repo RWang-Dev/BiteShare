@@ -6,7 +6,6 @@ interface CommentProps {
   width: number;
   height: number;
   color: string;
-  strokeWidth: number;
 }
 
 const Comment = (props: CommentProps) => {
@@ -17,7 +16,7 @@ const Comment = (props: CommentProps) => {
       height={props.height || 800}
       fill="none" // No fill, so it's an outline
       stroke={props.color || "#000000"} // Default stroke color to black
-      strokeWidth={props.strokeWidth || 30} // Adjust stroke width as needed
+      strokeWidth={30} // Adjust stroke width as needed
       strokeLinecap="round"
       strokeLinejoin="round"
     >

@@ -8,13 +8,16 @@ import {
 } from "react-native-responsive-screen";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setActive, setID } from "@/store/slices/couponRedemption";
 
-const CouponRedemptionPopup = (props) => {
-  const active = useSelector((state) => state.couponRedemption.active);
-  const ID = useSelector((state) => state.couponRedemption.ID);
-  const dispatch = useDispatch();
+interface CouponRedemptionPopupProps {
+  id: number | null;
+}
+const CouponRedemptionPopup = (props: CouponRedemptionPopupProps) => {
+  const active = useAppSelector((state) => state.couponRedemption.active);
+  const ID = useAppSelector((state) => state.couponRedemption.ID);
+  const dispatch = useAppDispatch();
   const [couponData, setCouponData] = useState({
     title: "",
     description: "",
@@ -28,7 +31,7 @@ const CouponRedemptionPopup = (props) => {
     console.log(couponData.title, couponData.description);
   }, [couponData]);
 
-  const getCouponByID = async (id) => {
+  const getCouponByID = async (id: number | null) => {
     setCouponData({
       title: "Chicken Wings " + id,
       description: "BOGO basket 50% Off",
@@ -37,7 +40,7 @@ const CouponRedemptionPopup = (props) => {
 
   const cancelRedemption = async () => {
     dispatch(setActive(false));
-    dispatch(setID(""));
+    dispatch(setID(null));
   };
 
   return (

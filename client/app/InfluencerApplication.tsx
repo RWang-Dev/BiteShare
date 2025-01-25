@@ -34,7 +34,7 @@ const InfluencerApplication = () => {
   return (
     <View style={{ flex: 1 }}>
       <Pressable style={styles.back_button} onPressOut={() => router.back()}>
-        <BackButton width={vw("7%")} height={vh("7%")} color={"#D26E22"} />
+        <BackButton width={30} height={30} color={"#ff7b00"} />
       </Pressable>
       <View style={styles.mainContent}>
         <Text style={styles.title}>Influencer Application</Text>
@@ -68,19 +68,21 @@ const InfluencerApplication = () => {
 const styles = StyleSheet.create({
   back_button: {
     alignSelf: "flex-start",
-    marginLeft: 15,
-    marginTop: 0,
+    position: "absolute",
+    left: 15,
+    top: 15,
   },
   mainContent: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
+    paddingTop: vh("10%"),
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 800,
-    color: "#E7630A",
+    color: "#ff7b00",
     // marginTop: vh("2%"),
     fontFamily: "Roboto_400Regular",
   },
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   usernameInput: {
-    width: "60%",
+    width: "70%",
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
@@ -112,14 +114,14 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   submitBtn: {
-    width: "60%",
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E7630A",
+    width: "80%",
+    height: 50,
+    backgroundColor: "#ff7b00",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: vh("4%"),
+    borderRadius: 10,
   },
   submitBtnTxt: {
     textAlign: "center",

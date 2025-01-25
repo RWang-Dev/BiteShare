@@ -28,11 +28,12 @@ yarn-error.*
 *.pem
 
 # local env files
-.env
+*.env
 .env*.local
 .env.development
 .env.test
 .env.production
+**/.env
 
 # typescript
 *.tsbuildinfo
@@ -65,3 +66,6 @@ android/
 # Your custom ignores
 app-example
 Keys.jsx
+Keys.tsx
+firebaseAccountKey.json
+firebaseConfig.js
