@@ -18,48 +18,40 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 
 // icons
-import RightArrow from "../../assets/icons/RightArrow";
+// import RightArrow from "../../icons/RightArrow";
 
-// Redux
-import { useSelector, useDispatch } from "react-redux";
-import { setActive, setID } from "@/store/slices/couponRedemption";
-
-const CouponItem = (props) => {
-  const active = useSelector((state) => state.couponRedemption.active);
-  const ID = useSelector((state) => state.couponRedemption.ID);
-  const dispatch = useDispatch();
-
-  const redeemCoupon = (key) => {
-    dispatch(setActive(true));
-    dispatch(setID(key));
-  };
+const CouponForFeed = () => {
+    {/* Replace with redeem functionality */}
+    const handlePress = () => {
+      Alert.alert("Coupon claimed")
+    }
 
   return (
-      <View style={styles.main}>
-        
-        {/* Top Section */}
-        <View style={styles.topSection}>
-        <View style={styles.couponLogo}>
-          <Image source={require('../../assets/images/jakeenos-logo.png')} 
-          style={styles.couponLogo}
-          resizeMode="contain">
-          </Image>
-        </View>
-        <View style={{alignItems:"center"}}>
-          <Text style={{ fontWeight: "bold", fontSize: 20 }}>Chicken Wings</Text>
-          <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
-        </View>
-        </View>
-        
-        {/* Bottom Section */}
-        <View style={styles.bottomSection}>
-          <Pressable style={styles.redeemIcon}>
-          <Text style={styles.redeemText}>Claim</Text>
-          </Pressable>
-          <Text style={styles.expirationText}>Expires 01/31/2025</Text>
-        </View>
-  
+    <View style={styles.main}>
+      
+      {/* Top Section */}
+      <View style={styles.topSection}>
+      <View style={styles.couponLogo}>
+        <Image source={require('../../assets/images/jakeenos-logo.png')} 
+        style={styles.couponLogo}
+        resizeMode="contain">
+        </Image>
       </View>
+      <View style={{alignItems:"center"}}>
+        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Chicken Wings</Text>
+        <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
+      </View>
+      </View>
+      
+      {/* Bottom Section */}
+      <View style={styles.bottomSection}>
+        <Pressable style={styles.redeemIcon} onPress={handlePress}>
+        <Text style={styles.redeemText}>Claim</Text>
+        </Pressable>
+        <Text style={styles.expirationText}>Expires 01/31/2025</Text>
+      </View>
+
+    </View>
   );
 };
 
@@ -67,25 +59,26 @@ const CouponItem = (props) => {
 const styles = StyleSheet.create({
   main: {
     backgroundColor: "#FFF3E2",
-    width: vw("92.5%"),
+    width: vw("100%"),
     height: vh("15%"),
-    borderRadius: 15,
     display: "flex",
     flexDirection: "column",
     justifyContent: "left",
     alignItems: "center",
     position: "relative",
+    // overflow: 'hidden',
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
     shadowColor: "#E7630A",
     shadowOpacity: 0.75,
     shadowOffset: {width:0, height:2},
+    marginBottom: "2.5%",
   },
   topSection: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f3b944",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     flex: 1.25,
   },
   bottomSection: {
@@ -130,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CouponItem;
+export default CouponForFeed;
