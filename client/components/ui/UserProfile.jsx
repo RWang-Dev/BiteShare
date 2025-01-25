@@ -242,30 +242,18 @@ const styles = StyleSheet.create({
     marginTop: vh("2%"),
     gap: vw("10%"),
   },
-  influencerStats: {
-    width: "100%",
-    position: "absolute",
-    top: "20%",
-  },
-  influencerFollowers: {
-    position: "absolute",
-    left: "10%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  influencerLikes: {
-    position: "absolute",
-    right: "10%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   profileStatsItem: {
     display: "flex",
     flexDirection: "column",
     gap: 5,
     justifyContent: "center",
     alignItems: "center",
+  },
+  influencerStats: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: "2.5%",
   },
   contentSection: {
     backgroundColor: "white",
