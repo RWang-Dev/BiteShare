@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import multer from "multer";
+import path from "path";
 
 dotenv.config();
 const admin = require("firebase-admin");
@@ -17,6 +19,7 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+const storage = admin.storage().bucket("biteshare-5f270.firebasestorage.app");
 
 // Middleware
 app.use(cors());
@@ -27,6 +30,13 @@ app.use(morgan("dev"));
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.message);
   res.status(500).send("Internal Server Error");
+});
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
 });
 
 // Routes
@@ -68,7 +78,8 @@ app.get("/users/:uid", async (req: Request, res: Response) => {
     const userDoc = await userCollection.doc(uid).get();
 
     if (!userDoc.exists) {
-      res.status(404).json({ error: "User not found" });
+      res.status(200).json({ result: "User not found" });
+      return;
     }
 
     res.status(200).json({
@@ -83,33 +94,59 @@ app.get("/users/:uid", async (req: Request, res: Response) => {
 });
 
 // POST
-app.post("/users", async (req: Request, res: Response) => {
-  try {
-    const { uid, username } = req.body;
-    if (!uid || !username) {
-      res.status(400).json({ error: "UID and username are required" });
-    }
+app.post(
+  "/users/createProfile",
+  upload.single("profileImage"),
+  async (req: Request, res: Response) => {
+    try {
+      const { uid, username } = req.body;
+      const file = req.file;
 
-    const usersCollection = await db.collection("users");
-    await usersCollection.doc(uid).set(
-      {
+      if (!uid || !username) {
+        res.status(400).json({ error: "UID and username are required" });
+      }
+
+      let profileImageUrl = "";
+
+      if (file) {
+        const fileName = file.originalname;
+        const fileUpload = storage.file(`users/${uid}/${fileName}`);
+
+        await fileUpload.save(file.buffer, {
+          metadata: {
+            contentType: file.mimetype,
+          },
+        });
+
+        await fileUpload.makePublic();
+        profileImageUrl = `https://storage.googleapis.com/${storage.name}/users/${uid}/${fileName}`;
+      }
+
+      const userData: any = {
         username,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      };
 
-    res.status(201).json({
-      message: "User created/updated successfully",
-      uid,
-      username,
-    });
-  } catch (error) {
-    console.error("Error creating user: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+      if (profileImageUrl) {
+        userData.profileImageUrl = profileImageUrl;
+      }
+
+      const usersCollection = await db.collection("users");
+      await usersCollection.doc(uid).set(userData, { merge: true });
+
+      res.status(201).json({
+        message: "User created/updated successfully",
+        uid,
+        username,
+        profileImageUrl,
+      });
+    } catch (error) {
+      console.error("Error creating user: ", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+    return;
   }
-  return;
-});
+);
 
 // Start server
 app.listen(PORT, () => {

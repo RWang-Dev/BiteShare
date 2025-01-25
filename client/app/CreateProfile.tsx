@@ -44,23 +44,12 @@ const CreateProfile: FC = () => {
   const auth = getAuth();
 
   useEffect(() => {
-    fetchData();
     if (auth) {
       const user = auth.currentUser;
       console.log("Current User: ", user);
       console.log(user!.uid);
     }
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/test`);
-      console.log(response.data);
-      setBackendData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -95,13 +84,34 @@ const CreateProfile: FC = () => {
   const handleSubmit = async () => {
     validateUsername(username);
 
+    const formData = new FormData();
+    const user = auth.currentUser;
+    const uid = user!.uid;
+    formData.append("uid", uid);
+    formData.append("username", username);
+    if (image) {
+      // Attempt to derive the file extension (optional)
+      const fileExtension = image.split(".").pop();
+      const mimeType = "image/" + (fileExtension === "png" ? "png" : "jpeg");
+
+      formData.append("profileImage", {
+        uri: image,
+        name: `profileImage.${fileExtension || "jpg"}`, // e.g. "profile.jpg"
+        type: mimeType, // e.g. "image/jpeg" or "image/png"
+      } as any);
+    }
+    console.log("FORM DATA IMAGE: ", formData.get("profileImage"));
+
     try {
-      const user = auth.currentUser;
-      const uid = user!.uid;
-      const response = await axios.post(`${API_BASE_URL}/users`, {
-        uid,
-        username,
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/users/createProfile`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       console.log(response.data);
     } catch (error) {
       console.error("Error saving user profile: ", error);
@@ -192,17 +202,7 @@ const styles = StyleSheet.create({
   user_default: {
     width: vw("49%"),
     height: vw("49%"),
-  },
-  center_circle: {
-    backgroundColor: "#ff7b00",
-    marginTop: vh("5%"),
-    width: vw("50%"),
-    height: vw("50%"),
-    borderRadius: vw("25%"),
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
+    pointerEvents: "box-none",
   },
   title: {
     fontSize: 30,
@@ -261,6 +261,9 @@ const styles = StyleSheet.create({
     height: vw("49%"),
     borderRadius: vw("24.5%"),
     resizeMode: "cover",
+    pointerEvents: "none",
+    zIndex: 1,
+    elevation: 1,
   },
 
   remove_img_btn: {
@@ -273,6 +276,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 10,
+    zIndex: 5,
+    elevation: 5,
   },
 
   image_container: {
