@@ -18,6 +18,7 @@ import Svg, { Path } from "react-native-svg";
 
 import CouponItem from "./CouponItem";
 import CouponRedemptionPopup from "./CouponRedemptionPopup";
+import CouponForFeed from "./FeedCouponItem";
 
 import DefaultUser from "../../assets/icons/DefaultUser";
 import Profile from "../../assets/icons/Profile";
