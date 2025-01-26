@@ -30,25 +30,30 @@ const CouponItem = (props: CouponItemProps) => {
 
   return (
     <View style={styles.main}>
-      {/* Left Section - Logo */}
-      <View style={styles.couponLogoContainer}>
-        <Image
-          source={require("../../assets/images/jakeenos-logo.png")}
-          style={styles.couponLogo}
-          resizeMode="contain"
-        />
+      {/* Top Section */}
+      <View style={styles.topSection}>
+        <View style={styles.couponLogo}>
+          <Image
+            source={require("../../assets/images/jakeenos-logo.png")}
+            style={styles.couponLogo}
+            resizeMode="contain"
+          ></Image>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+            Chicken Wings
+          </Text>
+          <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
+        </View>
       </View>
 
-      {/* Middle Section - Coupon Details */}
-      <View style={styles.couponDetails}>
-        <Text style={styles.couponTitle}>{props.item}</Text>
-        <Text style={styles.couponDescription}>{props.description}</Text>
+      {/* Bottom Section */}
+      <View style={styles.bottomSection}>
+        <Pressable style={styles.redeemIcon}>
+          <Text style={styles.redeemText}>Claim</Text>
+        </Pressable>
+        <Text style={styles.expirationText}>Expires 01/31/2025</Text>
       </View>
-
-      {/* Right Section - Claim Button */}
-      <Pressable style={styles.redeemIcon} onPress={() => redeemCoupon(props.id)}>
-        <Text style={styles.redeemText}>Claim</Text>
-      </Pressable>
     </View>
   );
 };
@@ -59,47 +64,62 @@ const styles = StyleSheet.create({
     width: vw("92.5%"),
     height: vh("15%"),
     borderRadius: 15,
-    flexDirection: "row",
+    display: "flex",
+    flexDirection: "column",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "black",
+    position: "relative",
     shadowColor: "#E7630A",
     shadowOpacity: 0.75,
     shadowOffset: { width: 0, height: 2 },
-    paddingHorizontal: vw("3%"),
   },
-  couponLogoContainer: {
-    width: vw("15%"),
-    height: vh("15%"),
-    justifyContent: "center",
+  topSection: {
+    width: "100%",
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#f3b944",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    flex: 1.25,
+  },
+  bottomSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "white",
+    width: "100%",
+    flex: 1,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    margin: 0,
+    padding: 0,
   },
   couponLogo: {
-    width: "100%",
-    height: "100%",
+    width: vw("15%"),
+    height: vh("15%"),
     borderRadius: 30,
-  },
-  couponDetails: {
-    flex: 1,
+    marginRight: "10%",
+    margin: "5%",
     justifyContent: "center",
-  },
-  couponTitle: {
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  couponDescription: {
-    fontSize: 16,
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
   },
   redeemIcon: {
     backgroundColor: "#e7630a",
+    marginLeft: "5%",
     borderRadius: 20,
-    paddingVertical: vh("1.5%"),
-    paddingHorizontal: vw("5%"),
+    fontSize: 18,
+    padding: "2.5%",
+    width: "30%",
   },
   redeemText: {
     textAlign: "center",
     fontWeight: "bold",
     color: "white",
+  },
+  expirationText: {
+    marginRight: "10%",
+    fontSize: 18,
   },
 });
 
