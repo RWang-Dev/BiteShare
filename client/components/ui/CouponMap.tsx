@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   },
   autoCompleteContainer: {
     position: "absolute",
-    top: vh("5%"),
+    top: vh("7.5%"),
     left: "7.5%",
     width: "85%",
     zIndex: 15,

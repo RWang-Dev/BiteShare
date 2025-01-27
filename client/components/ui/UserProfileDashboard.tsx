@@ -75,9 +75,8 @@ const styles = StyleSheet.create({
     shadowColor: "#E7630A",
     shadowOpacity: 0.5,
     shadowOffset: {width:0, height:2},
-    margin: 5,
-    marginLeft: 15,
-    marginRight:15,
+    margin: "1.5%",
+    marginHorizontal: "7.5%",
     justifyContent: "center",
   },
   statTxtLeft: {
