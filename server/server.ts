@@ -70,6 +70,31 @@ app.get("/test-db", async (req: Request, res: Response) => {
   }
 });
 
+app.get("/coupons", async (req: Request, res: Response) => {
+  try {
+    const couponCollection = await db.collection("coupons");
+    const snapshot = await couponCollection.get();
+
+    const coupons = snapshot.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.json({
+      status: "Connected",
+      couponCount: coupons.length,
+      coupons,
+    });
+  } catch (error) {
+    console.error("Firebase connection error: ", error);
+    res.status(500).json({
+      status: "Error",
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+  return;
+});
+
 app.get("/users/:uid", async (req: Request, res: Response) => {
   const { uid } = req.params;
 
