@@ -18,6 +18,7 @@ import Svg, { Path } from "react-native-svg";
 // Components
 import Footer from "../components/ui/Footer";
 import CouponFeed from "../components/ui/CouponFeed";
+import CouponFeedTest from "@/components/ui/CouponFeedTest";
 import CouponMap from "../components/ui/CouponMap";
 import UserProfile from "../components/ui/UserProfile";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -39,7 +40,7 @@ const MainLayout: FC = () => {
   const renderContent = () => {
     switch (pageTab) {
       case TABS.COUPON:
-        return <CouponFeed />;
+        return <CouponFeedTest />;
       case TABS.MAP:
         return <CouponMap />;
       case TABS.PROFILE:

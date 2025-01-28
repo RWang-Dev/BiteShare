@@ -23,12 +23,15 @@ import Reply from "../../assets/icons/Reply";
 import { Lora_500Medium } from "@expo-google-fonts/dev";
 import CouponItem from "./CouponItem";
 
-const CouponFeedItem = () => {
+interface CouponFeedItemProps {
+  id?: number;
+}
+const CouponFeedItem = (props: CouponFeedItemProps) => {
   return (
     <View style={styles.main}>
       <View style={styles.profile_container}>
         <View style={styles.profile_img} />
-        <Text>Account Name</Text>
+        <Text>Account Name {props.id}</Text>
       </View>
       <Image
         style={styles.coupon_thumbnail}
@@ -38,7 +41,6 @@ const CouponFeedItem = () => {
       <View style={styles.coupon_container}>
         <CouponForFeed />
       </View>
-    
 
       <View style={styles.comment_reply_container}>
         <Comment width={30} height={30} color={"black"} />

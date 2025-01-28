@@ -72,27 +72,37 @@ app.get("/test-db", async (req: Request, res: Response) => {
 
 app.get("/coupons", async (req: Request, res: Response) => {
   try {
-    const couponCollection = await db.collection("coupons");
-    const snapshot = await couponCollection.get();
+    const { limit = 10, lastVisible } = req.query;
+    const limitInt = parseInt(limit as string, 10);
+
+    let query = db.collection("coupons").orderBy("createdAt").limit(limitInt);
+
+    if (lastVisible && lastVisible !== "null") {
+      // Parse the `lastVisible` value (it should be the `createdAt` of the last document)
+      const lastVisibleValue = JSON.parse(lastVisible as string);
+      // Use `startAfter` with the value of the `createdAt` field from the last document
+      query = query.startAfter(lastVisibleValue.createdAt);
+    }
+
+    const snapshot = await query.get();
 
     const coupons = snapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
+    // Get the `createdAt` of the last document in this batch for pagination
+    const newLastVisible =
+      snapshot.docs[snapshot.docs.length - 1]?.data().createdAt || null;
+
     res.json({
-      status: "Connected",
-      couponCount: coupons.length,
       coupons,
+      lastVisible: newLastVisible ? JSON.stringify(newLastVisible) : null,
     });
   } catch (error) {
     console.error("Firebase connection error: ", error);
-    res.status(500).json({
-      status: "Error",
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
+    res.status(500).json({ error: "Failed to fetch coupons" });
   }
-  return;
 });
 
 app.get("/users/:uid", async (req: Request, res: Response) => {
