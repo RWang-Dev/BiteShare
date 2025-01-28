@@ -220,5 +220,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
-// export { default } from "./InfluencerApplication";
+// export default App;
+// // export { default } from "./InfluencerApplication";
+export { default } from "../components/ui/CouponFeedTest";

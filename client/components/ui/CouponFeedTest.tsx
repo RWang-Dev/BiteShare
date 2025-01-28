@@ -24,16 +24,9 @@ const CouponFeedTest = () => {
   const [hasMore, setHasMore] = useState(true);
   const [lastVisible, setLastVisible] = useState(null);
 
-  useEffect(() => {
-    loadCoupons();
-  }, []);
-
-  useEffect(() => {
-    if (coupons) {
-      console.log(coupons);
-      console.log("NUM COUPONS: ", coupons.length);
-    }
-  });
+  // useEffect(() => {
+  //   loadCoupons();
+  // }, []);
 
   const loadCoupons = async () => {
     if (loading || !hasMore) return;
@@ -90,9 +83,7 @@ const CouponFeedTest = () => {
       <FlatList
         data={coupons}
         keyExtractor={(item) => (item as any).id.toString()}
-        renderItem={({ item, index }) => (
-          <CouponFeedItem key={index} id={index} />
-        )}
+        renderItem={({ item, index }) => <CouponFeedItem id={index} />}
         contentContainerStyle={styles.couponScroll}
         onEndReached={loadCoupons} // Load more data when reaching the end
         onEndReachedThreshold={0.2} // Trigger when 50% from the bottom

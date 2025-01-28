@@ -76,14 +76,15 @@ app.get("/coupons", async (req: Request, res: Response) => {
     const limitInt = parseInt(limit as string, 10);
 
     let query = db.collection("coupons").orderBy("createdAt").limit(limitInt);
-
     if (lastVisible && lastVisible !== "null") {
-      // Parse the `lastVisible` value (it should be the `createdAt` of the last document)
-      const lastVisibleValue = JSON.parse(lastVisible as string);
-      // Use `startAfter` with the value of the `createdAt` field from the last document
-      query = query.startAfter(lastVisibleValue.createdAt);
+      console.log(lastVisible);
+      const dateObj = new Date(lastVisible as string);
+      query = db
+        .collection("coupons")
+        .orderBy("createdAt")
+        .startAfter(dateObj)
+        .limit(limitInt);
     }
-
     const snapshot = await query.get();
 
     const coupons = snapshot.docs.map((doc: any) => ({
@@ -92,12 +93,15 @@ app.get("/coupons", async (req: Request, res: Response) => {
     }));
 
     // Get the `createdAt` of the last document in this batch for pagination
-    const newLastVisible =
-      snapshot.docs[snapshot.docs.length - 1]?.data().createdAt || null;
+    let newLastVisible = null;
+    if (coupons.length > 0) {
+      newLastVisible = JSON.stringify(coupons[coupons.length - 1].createdAt);
+    }
 
+    console.log("NEW LAST VISIBLE: ", newLastVisible);
     res.json({
       coupons,
-      lastVisible: newLastVisible ? JSON.stringify(newLastVisible) : null,
+      lastVisible: newLastVisible,
     });
   } catch (error) {
     console.error("Firebase connection error: ", error);
