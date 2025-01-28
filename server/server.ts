@@ -77,12 +77,17 @@ app.get("/coupons", async (req: Request, res: Response) => {
 
     let query = db.collection("coupons").orderBy("createdAt").limit(limitInt);
     if (lastVisible && lastVisible !== "null") {
-      console.log(lastVisible);
-      const dateObj = new Date(lastVisible as string);
+      console.log("GENSHIN SUCKS: ", lastVisible);
+      const parsedLastVisible = JSON.parse(lastVisible as string);
+      const lastVisibleTimestamp = new admin.firestore.Timestamp(
+        parsedLastVisible._seconds,
+        parsedLastVisible._nanoseconds
+      );
+      console.log("PARSED: ", lastVisibleTimestamp);
       query = db
         .collection("coupons")
         .orderBy("createdAt")
-        .startAfter(dateObj)
+        .startAfter(lastVisibleTimestamp)
         .limit(limitInt);
     }
     const snapshot = await query.get();
