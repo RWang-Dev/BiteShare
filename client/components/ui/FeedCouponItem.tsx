@@ -1,4 +1,4 @@
-import React, { userState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Pressable,
-  Alert
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -16,45 +16,64 @@ import {
 import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
+import { Timestamp } from "firebase/firestore";
 
 // icons
 // import RightArrow from "../../icons/RightArrow";
 
-const CouponForFeed = () => {
-    {/* Replace with redeem functionality */}
-    const handlePress = () => {
-      Alert.alert("Coupon claimed")
-    }
+interface CouponForFeedProps {
+  couponDetails: any;
+}
+const CouponForFeed = (props: CouponForFeedProps) => {
+  const handlePress = () => {
+    Alert.alert("Coupon claimed");
+  };
+
+  const renderExpireDate = (timestamp: {
+    _seconds: number;
+    _nanoseconds: number;
+  }) => {
+    console.log("LOGGIN TIMESTAMP: ", timestamp);
+    const date = new Date(timestamp._seconds * 1000);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    return <Text style={styles.expirationText}>Expires {formattedDate}</Text>;
+  };
 
   return (
     <View style={styles.main}>
-      
       {/* Top Section */}
       <View style={styles.topSection}>
-      <View style={styles.couponLogo}>
-        <Image source={require('../../assets/images/jakeenos-logo.png')} 
-        style={styles.couponLogo}
-        resizeMode="contain">
-        </Image>
+        <View style={styles.couponLogo}>
+          <Image
+            source={require("../../assets/images/jakeenos-logo.png")}
+            style={styles.couponLogo}
+            resizeMode="contain"
+          ></Image>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+            Chicken Wings
+          </Text>
+          <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
+        </View>
       </View>
-      <View style={{alignItems:"center"}}>
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Chicken Wings</Text>
-        <Text style={{ fontSize: 16 }}>BOGO basket 50% Off</Text>
-      </View>
-      </View>
-      
+
       {/* Bottom Section */}
       <View style={styles.bottomSection}>
         <Pressable style={styles.redeemIcon} onPress={handlePress}>
-        <Text style={styles.redeemText}>Claim</Text>
+          <Text style={styles.redeemText}>Claim</Text>
         </Pressable>
-        <Text style={styles.expirationText}>Expires 01/31/2025</Text>
+        {props.couponDetails.expiryDate
+          ? renderExpireDate(props.couponDetails.expiryDate)
+          : renderExpireDate(props.couponDetails.validUntil)}
       </View>
-
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   main: {
@@ -63,7 +82,6 @@ const styles = StyleSheet.create({
     height: vh("15%"),
     display: "flex",
     flexDirection: "column",
-    justifyContent: "left",
     alignItems: "center",
     position: "relative",
     // overflow: 'hidden',
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 15,
     shadowColor: "#E7630A",
     shadowOpacity: 0.75,
-    shadowOffset: {width:0, height:2},
+    shadowOffset: { width: 0, height: 2 },
     marginBottom: "2.5%",
   },
   topSection: {
@@ -85,13 +103,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor:"white",
+    backgroundColor: "white",
     width: "100%",
     flex: 1,
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
-    margin:0,
-    padding:0,
+    margin: 0,
+    padding: 0,
   },
   couponLogo: {
     width: vw("15%"),
@@ -99,10 +117,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginRight: "10%",
     margin: "5%",
-    justifyContent: 'center',
+    justifyContent: "center",
     shadowColor: "black",
     shadowOpacity: 0.1,
-    shadowOffset: {width:0, height:2},
+    shadowOffset: { width: 0, height: 2 },
   },
   redeemIcon: {
     backgroundColor: "#e7630a",
@@ -115,7 +133,7 @@ const styles = StyleSheet.create({
   redeemText: {
     textAlign: "center",
     fontWeight: "bold",
-    color: "white"
+    color: "white",
   },
   expirationText: {
     marginRight: "10%",

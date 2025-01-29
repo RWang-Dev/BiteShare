@@ -11,11 +11,15 @@ import BackButton from "../assets/icons/BackButton";
 
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUsername } from "@/store/slices/influencerApplication";
+import { setUserType } from "@/store/slices/userProfile";
 
 const InfluencerApplication = () => {
   const username = useAppSelector(
     (state) => state.influencerApplication.username
   );
+
+  const userType = useAppSelector((state) => state.userProfile.userType);
+
   const dispatch = useAppDispatch();
 
   const handleChange = (text: string) => {
@@ -28,7 +32,7 @@ const InfluencerApplication = () => {
 
   const handleSubmit = () => {
     console.log("Submitting username:", username, "for verification!");
-
+    dispatch(setUserType("influencer"));
     router.back();
   };
   return (

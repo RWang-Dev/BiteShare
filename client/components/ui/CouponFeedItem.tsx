@@ -23,8 +23,12 @@ import Reply from "../../assets/icons/Reply";
 import { Lora_500Medium } from "@expo-google-fonts/dev";
 import CouponItem from "./CouponItem";
 
+import firebase from "firebase/app";
+import { Timestamp } from "firebase/firestore";
+
 interface CouponFeedItemProps {
   id?: number;
+  children?: any;
 }
 const CouponFeedItem = (props: CouponFeedItemProps) => {
   return (
@@ -38,9 +42,7 @@ const CouponFeedItem = (props: CouponFeedItemProps) => {
         source={require("../../assets/images/Coupon_feed_image.png")}
       />
 
-      <View style={styles.coupon_container}>
-        <CouponForFeed />
-      </View>
+      <View style={styles.coupon_container}>{props.children}</View>
 
       <View style={styles.comment_reply_container}>
         <Comment width={30} height={30} color={"black"} />

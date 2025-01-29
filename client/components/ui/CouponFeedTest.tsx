@@ -16,6 +16,8 @@ import CouponFeedItem from "./CouponFeedItem";
 // api
 import { API_BASE_URL } from "@/api.config";
 import axios from "axios";
+import { Timestamp } from "firebase/firestore";
+import CouponForFeed from "./FeedCouponItem";
 
 const CouponFeedTest = () => {
   const [coupons, setCoupons] = useState([]);
@@ -83,7 +85,11 @@ const CouponFeedTest = () => {
       <FlatList
         data={coupons}
         keyExtractor={(item) => (item as any).id.toString()}
-        renderItem={({ item, index }) => <CouponFeedItem id={index} />}
+        renderItem={({ item, index }) => (
+          <CouponFeedItem id={index}>
+            <CouponForFeed couponDetails={item} />
+          </CouponFeedItem>
+        )}
         contentContainerStyle={styles.couponScroll}
         onEndReached={loadCoupons} // Load more data when reaching the end
         onEndReachedThreshold={0.2} // Trigger when 50% from the bottom

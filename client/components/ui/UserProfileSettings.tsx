@@ -27,7 +27,17 @@ const UserProfileSettings = () => {
           >
             <Text>Apply to be an influencer</Text>
           </Pressable>
-        ) : null}
+        ) : (
+          <Pressable
+            style={({ pressed }) => [
+              styles.influencerApplicationBtn,
+              { backgroundColor: pressed ? "#A6A6A6" : "#EBEBEB" }, // Change background color when pressed
+            ]}
+            onPressOut={() => dispatch(setUserType("default"))}
+          >
+            <Text>Switch back to user view</Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
