@@ -31,7 +31,7 @@ const CouponFeed = () => {
 
 const styles = StyleSheet.create({
   main: {
-    backgroundColor: "#EBEBEB",
+    backgroundColor: "white",
     width: vw("100%"),
     height: vh("100%") - 65, // Adjust for footer height
     display: "flex",

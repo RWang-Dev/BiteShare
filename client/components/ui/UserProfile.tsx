@@ -7,6 +7,7 @@ import {
   Dimensions,
   Pressable,
   ScrollView,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -39,6 +40,10 @@ const UserProfile = () => {
   const active = useAppSelector((state) => state.couponRedemption.active);
   const ID = useAppSelector((state) => state.couponRedemption.ID);
   const dispatch = useAppDispatch();
+  
+  // OS dependent styling
+  const isIOS = Platform.OS == 'ios';
+  const isAndroid = Platform.OS == 'android';
 
   const TABS = {
     COUPON: "Coupon",
@@ -186,6 +191,7 @@ const UserProfile = () => {
 };
 
 const styles = StyleSheet.create({
+  // default IOS styling
   main: {
     backgroundColor: "white",
     flex: 1,
@@ -309,6 +315,132 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: "black",
   },
+
+  //Android specific styling
+  
+  // main: {
+  //   backgroundColor: "white",
+  //   flex: 1,
+  // },
+  // popup: {
+  //   position: "absolute",
+  //   top: "15%",
+  //   left: "5%",
+  //   // transform: [{ translateX: -50 }, { translateY: -50 }],
+  //   zIndex: 5,
+  //   elevation: 5,
+  //   width: vw("90%"),
+  //   height: vh("75%"),
+  // },
+  // profileBorder: {
+  //   width: vw("22%"),
+  //   height: vw("22%"),
+  //   backgroundColor: "transparent",
+  //   borderWidth: 2,
+  //   borderRadius: vw("11%"),
+  //   borderColor: "#ff7b00",
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   marginTop: "15%"
+  // },
+  // profileHeader: {
+  //   backgroundColor: "white",
+  //   width: "100%",
+  //   height: "35%",
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   paddingTop: 10,
+  // },
+  // user_default: {
+  //   width: vw("20%"),
+  //   height: vw("20%"),
+  // },
+  // profileName: {
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   marginTop: vh("2%"),
+  // },
+  // profileStats: {
+  //   width: "100%",
+  //   height: "30%",
+  //   display: "flex",
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   marginTop: vh("2%"),
+  //   gap: vw("10%"),
+  // },
+  // profileStatsItem: {
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   gap: 5,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // influencerStats: {
+  //   display: "flex",
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   margin: "2.5%",
+  // },
+  // influencerFollowers: {
+  //   marginHorizontal: "2.5%",
+  // },
+  // influencerLikes: {
+  //   marginHorizontal: "2.5%",
+  // },
+  // contentSection: {
+  //   height: "65%",
+  //   width: "100%",
+  //   flex: 1,
+  // },
+  // profileTabsContainer: {
+  //   display: "flex",
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // profileTabDefault: {
+  //   backgroundColor: "#E7630A",
+  //   width: "30%",
+  //   height: 30,
+  //   display: "flex",
+  //   flexShrink: 1,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   textAlign: "center",
+  //   borderRadius: 12,
+  //   borderBottomLeftRadius: 0, 
+  //   borderBottomRightRadius: 0,
+
+  //   borderColor: "black",
+  //   borderWidth: 1,
+  // },
+  // profileTabActive: {
+  //   backgroundColor: "white",
+  //   width: "32.5%",
+  //   height: 30,
+  //   display: "flex",
+  //   flexShrink: 1,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   textAlign: "center",
+  //   borderRadius: 12,
+  //   borderBottomLeftRadius: 0, 
+  //   borderBottomRightRadius: 0,
+
+  //   borderColor: "black",
+  //   borderWidth: 0.5,
+  //   borderBottomWidth: 0,
+  // },
+  // profileTabComponents: {
+  //   flex: 1,
+  //   // backgroundColor: "black",
+  // },
 });
 
 export default UserProfile;

@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: vh("7.5%"),
+    marginTop: vh("5%"),
     gap: 5,
   },
   profile_img: {
@@ -112,10 +112,16 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginTop: 5,
     marginLeft: 10,
+    marginBottom: vh("5%"),
+    flex: 1,
   },
   viewAllComments: {
     color: "gray",
     marginLeft: 10,
+    marginTop: 5,
+    overflow: "visible",
+    zIndex: 10,
+    lineHeight: vh("3%"),
   },
 });
 

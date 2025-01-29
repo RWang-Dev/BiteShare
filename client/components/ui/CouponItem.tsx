@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     shadowColor: "#E7630A",
     shadowOpacity: 0.75,
     shadowOffset: { width: 0, height: 2 },
+    elevation: 15,
   },
   topSection: {
     width: "100%",

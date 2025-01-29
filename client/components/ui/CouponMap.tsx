@@ -27,6 +27,7 @@ import * as Location from "expo-location";
 import LocationDot from "../../assets/icons/LocationDot";
 import LocationArrow from "../../assets/icons/LocationArrow";
 import CouponBottomSheetItem from "./CouponBottomSheetItem";
+import CouponFeed from "./CouponFeed";
 import { GOOGLE_MAPS_API_KEY } from "@/Keys";
 
 // Redux
@@ -37,6 +38,7 @@ import {
   setMarkers,
 } from "@/store/slices/couponMap";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import CouponFeedItem from "./CouponFeedItem";
 
 type LocationType = {
   coords: {
@@ -194,7 +196,7 @@ const CouponMap: FC = () => {
     for (let i = 0; i < 5; i++) {
       couponsForRestaurant.push(
         <View key={i} style={{ marginBottom: 5 }}>
-          <CouponBottomSheetItem />
+          <CouponFeed></CouponFeed>
         </View>
       );
     }

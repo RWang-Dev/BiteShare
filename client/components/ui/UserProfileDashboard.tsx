@@ -19,7 +19,8 @@ const UserProfileDashboard = () => {
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.settingsHeader}>My Dashboard</Text>
-
+      <ScrollView>
+  
       {/*User Stats Section*/}
       <View style={styles.dashboardStats}>
         <View style={styles.statItem}>
@@ -45,8 +46,9 @@ const UserProfileDashboard = () => {
 
       {/*Deals Section*/}
       <Text style={styles.settingsHeader}>Deals to Promote</Text>
-      <ScrollView contentContainerStyle={styles.dealsScroll}>
+        <View style ={styles.dealsScroll}>
         {coupons.map((coupon) => coupon)}
+        </View>
       </ScrollView>
     </View>
   );
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
     shadowColor: "#E7630A",
     shadowOpacity: 0.5,
     shadowOffset: {width:0, height:2},
+    elevation: 15,
     margin: "1.5%",
     marginHorizontal: "7.5%",
     justifyContent: "center",
