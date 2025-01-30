@@ -6,10 +6,45 @@ import React from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUserType } from "@/store/slices/userProfile";
 
+// server
+import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
+
+// auth
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
+
 const UserProfileSettings = () => {
   const userType = useAppSelector((state) => state.userProfile.userType);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+
+  const auth = getAuth(firebaseApp);
+
+  const setUserDefault = async () => {
+    try {
+      if (!auth.currentUser) {
+        console.log("User not authenticated");
+        return;
+      }
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/updateUserType`,
+        { uid: auth.currentUser.uid, newUserType: "default" }
+      );
+      if (response.data) {
+        console.log("Successfully verified user");
+        dispatch(setUserType("default"));
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+    return;
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -33,7 +68,7 @@ const UserProfileSettings = () => {
               styles.influencerApplicationBtn,
               { backgroundColor: pressed ? "#A6A6A6" : "#EBEBEB" }, // Change background color when pressed
             ]}
-            onPressOut={() => dispatch(setUserType("default"))}
+            onPressOut={setUserDefault}
           >
             <Text>Switch back to user view</Text>
           </Pressable>

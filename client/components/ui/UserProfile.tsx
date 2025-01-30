@@ -15,6 +15,7 @@ import {
 } from "react-native-responsive-screen";
 import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
+import * as ImagePicker from "expo-image-picker";
 
 import CouponItem from "./CouponItem";
 import UserProfileCoupons from "./UserProfileCoupons";
@@ -28,6 +29,7 @@ import axios from "axios";
 // Influencer components
 import UserProfilePosts from "./UserProfilePosts";
 import UserProfileDashboard from "./UserProfileDashboard";
+import InfluencerPost from "./InfluencerPost";
 
 import DefaultUser from "../../assets/icons/DefaultUser";
 import Profile from "../../assets/icons/Profile";
@@ -54,6 +56,8 @@ const UserProfile = () => {
   const [username, setUsername] = useState("");
   const [profileImg, setProfileImg] = useState("");
   const auth = getAuth(firebaseApp);
+  const [postMedia, setPostMedia] = useState("");
+  const [postActive, setPostActive] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -76,6 +80,34 @@ const UserProfile = () => {
       console.error("Error fetching user: ", error);
     }
   };
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setPostMedia(result.assets[0].uri);
+      setPostActive(true);
+    }
+  };
+
+  const togglePostTab = async () => {
+    await pickImage();
+    alert("Post tab");
+    return;
+  };
+
   const TABS = {
     COUPON: "Coupon",
     POSTS: "Posts",
@@ -104,8 +136,18 @@ const UserProfile = () => {
           <CouponRedemptionPopup id={ID} />
         </View>
       ) : null}
+      {postActive ? (
+        <View style={styles.influencerPostPopup}>
+          <InfluencerPost />
+        </View>
+      ) : null}
 
       <View style={styles.profileHeader}>
+        {userType == "influencer" ? (
+          <Pressable style={styles.addPostBtn} onPressOut={togglePostTab}>
+            <Text>+</Text>
+          </Pressable>
+        ) : null}
         <View style={styles.profileBorder}>
           {auth.currentUser && auth.currentUser.photoURL ? (
             <Image
@@ -127,11 +169,7 @@ const UserProfile = () => {
           ) : (
             <Text style={{ fontWeight: "bold" }}>Username</Text>
           )}
-          {/* {userType == "default" ? (
-            <Text style={{ fontWeight: "bold" }}>@user_account</Text>
-          ) : (
-            <Text style={{ fontWeight: "bold" }}>@influencer_account</Text>
-          )} */}
+          {/*   */}
         </View>
 
         {userType == "influencer" ? (
@@ -239,6 +277,29 @@ const styles = StyleSheet.create({
   main: {
     backgroundColor: "white",
     flex: 1,
+  },
+  influencerPostPopup: {
+    backgroundColor: "white",
+    borderRadius: 40,
+    position: "absolute",
+    top: "15%",
+    left: "5%",
+    // transform: [{ translateX: -50 }, { translateY: -50 }],
+    zIndex: 5,
+    elevation: 5,
+    width: vw("90%"),
+    height: vh("75%"),
+  },
+  addPostBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "gray",
+    position: "absolute",
+    height: 30,
+    width: 30,
+    borderRadius: 25,
+    right: 20,
+    top: 20,
   },
   popup: {
     position: "absolute",

@@ -19,12 +19,21 @@ import axios from "axios";
 import { Timestamp } from "firebase/firestore";
 import CouponForFeed from "./FeedCouponItem";
 
+// auth
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
+
 const CouponFeedTest = () => {
   const [coupons, setCoupons] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [lastVisible, setLastVisible] = useState(null);
+  const auth = getAuth(firebaseApp);
 
   // useEffect(() => {
   //   loadCoupons();
@@ -37,12 +46,13 @@ const CouponFeedTest = () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/coupons`, {
         params: {
+          uid: auth.currentUser!.uid,
           limit: 2,
           lastVisible: lastVisible || undefined, // Send `null` as `undefined` to avoid "null" string
         },
       });
 
-      const couponData = response.data.coupons;
+      const couponData = response.data.unclaimedCoupons;
       if (couponData.length > 0) {
         setCoupons((prev) => [...prev, ...couponData] as any);
         // Update `lastVisible` with the `createdAt` of the last item in this batch

@@ -18,22 +18,46 @@ import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
 import { Timestamp } from "firebase/firestore";
 
-// icons
-// import RightArrow from "../../icons/RightArrow";
+// server
+import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
+
+// auth
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
 
 interface CouponForFeedProps {
   couponDetails: any;
 }
 const CouponForFeed = (props: CouponForFeedProps) => {
-  const handlePress = () => {
-    Alert.alert("Coupon claimed");
+  const auth = getAuth(firebaseApp);
+
+  const handlePress = async () => {
+    const couponid = props.couponDetails.id;
+    const userid = auth.currentUser!.uid;
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/claimCoupon`, {
+        uid: userid,
+        couponid: couponid,
+      });
+      if (response.data) {
+        Alert.alert("Coupon claimed: ", props.couponDetails.id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return;
   };
 
   const renderExpireDate = (timestamp: {
     _seconds: number;
     _nanoseconds: number;
   }) => {
-    console.log("LOGGIN TIMESTAMP: ", timestamp);
     const date = new Date(timestamp._seconds * 1000);
     const formattedDate = date.toLocaleDateString("en-US", {
       month: "long",
