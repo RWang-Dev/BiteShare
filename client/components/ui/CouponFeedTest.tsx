@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -27,17 +27,48 @@ import {
 } from "firebase/auth";
 import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
 
+// redux
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addCoupons,
+  setHasMore,
+  setLastVisible,
+  setScrollPosition,
+} from "@/store/slices/couponFeed";
+import { useSearchParams } from "expo-router/build/hooks";
+
+// scroll
+import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+
 const CouponFeedTest = () => {
-  const [coupons, setCoupons] = useState([]);
-  const [page, setPage] = useState(1);
+  const coupons = useAppSelector((state) => state.couponFeed.coupons);
+  const hasMore = useAppSelector((state) => state.couponFeed.hasMore);
+  const lastVisible = useAppSelector((state) => state.couponFeed.lastVisible);
+  const scrollPosition = useAppSelector(
+    (state) => state.couponFeed.scrollPosition
+  );
+  const scrollRef = useRef<FlatList<any>>(null);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [lastVisible, setLastVisible] = useState(null);
   const auth = getAuth(firebaseApp);
 
-  // useEffect(() => {
-  //   loadCoupons();
-  // }, []);
+  const isFocused = useIsFocused();
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (isFocused && scrollRef.current) {
+      scrollRef.current.scrollToOffset({
+        animated: false,
+        offset: scrollPosition,
+      });
+    }
+  }, []);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const position = event.nativeEvent.contentOffset.y;
+    dispatch(setScrollPosition(position));
+  };
 
   const loadCoupons = async () => {
     if (loading || !hasMore) return;
@@ -47,18 +78,21 @@ const CouponFeedTest = () => {
       const response = await axios.get(`${API_BASE_URL}/coupons`, {
         params: {
           uid: auth.currentUser!.uid,
-          limit: 2,
+          limit: 3,
           lastVisible: lastVisible || undefined, // Send `null` as `undefined` to avoid "null" string
         },
       });
 
-      const couponData = response.data.unclaimedCoupons;
+      const couponData = response.data.coupons;
       if (couponData.length > 0) {
-        setCoupons((prev) => [...prev, ...couponData] as any);
-        // Update `lastVisible` with the `createdAt` of the last item in this batch
-        setLastVisible(response.data.lastVisible);
+        const unclaimedCoupons = couponData.filter(
+          (coupon: any) => !coupon.claimed
+        );
+
+        dispatch(addCoupons(unclaimedCoupons));
+        dispatch(setLastVisible(response.data.lastVisible));
       } else {
-        setHasMore(false);
+        dispatch(setHasMore(false));
       }
     } catch (error) {
       console.error("Error fetching coupons: ", error);
@@ -73,38 +107,29 @@ const CouponFeedTest = () => {
   };
 
   return (
-    // <ScrollView
-    //   style={styles.main}
-    //   contentContainerStyle={styles.scrollContainer}
-    // >
-    //   {/* <Text style={styles.couponFeedTitle}>Coupon Feed</Text> */}
-    //   <View style={styles.itemContainer}>
-    //     <CouponFeedItem />
-    //   </View>
-    //   <View style={styles.itemContainer}>
-    //     <CouponFeedItem />
-    //   </View>
-    //   <View style={styles.itemContainer}>
-    //     <CouponFeedItem />
-    //   </View>
-    //   <View style={styles.itemContainer}>
-    //     <CouponFeedItem />
-    //   </View>
-    // </ScrollView>
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, alignItems: "center" }}>
       <FlatList
+        ref={scrollRef}
         data={coupons}
         keyExtractor={(item) => (item as any).id.toString()}
         renderItem={({ item, index }) => (
           <CouponFeedItem id={index}>
-            <CouponForFeed couponDetails={item} />
+            <CouponForFeed couponDetails={item} idx={index} />
           </CouponFeedItem>
         )}
         contentContainerStyle={styles.couponScroll}
         onEndReached={loadCoupons} // Load more data when reaching the end
-        onEndReachedThreshold={0.2} // Trigger when 50% from the bottom
+        onEndReachedThreshold={0.1} // Trigger when 50% from the bottom
         ListFooterComponent={renderFooter}
+        onScroll={handleScroll}
       />
+      {coupons.length == 0 ? (
+        <View style={styles.emptyCoupons}>
+          <Text style={{ fontWeight: "bold", fontSize: 18, color: "gray" }}>
+            No Coupons Right now
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -117,6 +142,13 @@ const styles = StyleSheet.create({
     marginLeft: "5%",
     marginTop: "3%",
     marginBottom: "2%",
+  },
+  emptyCoupons: {
+    position: "absolute",
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    top: "30%",
   },
   couponScroll: {
     flexGrow: 1,

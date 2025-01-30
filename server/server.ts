@@ -140,29 +140,21 @@ app.get("/coupons", async (req: Request, res: Response) => {
     }
     const snapshot = await query.get();
 
-    const unclaimedCoupons = snapshot.docs.map((doc: any) => ({
+    const coupons = snapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
+      claimed: claimedCoupons.includes(doc.id),
     }));
 
     let newLastVisible = null;
-    if (unclaimedCoupons.length > 0) {
-      newLastVisible = JSON.stringify(
-        unclaimedCoupons[unclaimedCoupons.length - 1].createdAt
-      );
+    if (coupons.length > 0) {
+      newLastVisible = JSON.stringify(coupons[coupons.length - 1].createdAt);
     }
 
-    unclaimedCoupons.filter(
-      (coupon: any) => !claimedCoupons.includes(coupon.id)
-    );
-    // .filter((coupon: any) => !claimedCoupons.includes(coupon.id));
-
-    // Get the `createdAt` of the last document in this batch for pagination
-
     console.log("NEW LAST VISIBLE: ", newLastVisible);
-    console.log("UNCLAIMED COUPONS: ", unclaimedCoupons);
-    res.json({
-      unclaimedCoupons,
+    console.log("UNCLAIMED COUPONS: ", coupons);
+    res.status(200).json({
+      coupons,
       lastVisible: newLastVisible,
     });
   } catch (error) {

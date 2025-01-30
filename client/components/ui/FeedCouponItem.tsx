@@ -30,10 +30,16 @@ import {
 } from "firebase/auth";
 import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
 
+// redux
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { removeCoupon } from "@/store/slices/couponFeed";
+
 interface CouponForFeedProps {
   couponDetails: any;
+  idx: number;
 }
 const CouponForFeed = (props: CouponForFeedProps) => {
+  const dispatch = useAppDispatch();
   const auth = getAuth(firebaseApp);
 
   const handlePress = async () => {
@@ -47,6 +53,7 @@ const CouponForFeed = (props: CouponForFeedProps) => {
       });
       if (response.data) {
         Alert.alert("Coupon claimed: ", props.couponDetails.id);
+        dispatch(removeCoupon(props.idx));
       }
     } catch (error) {
       console.error(error);
