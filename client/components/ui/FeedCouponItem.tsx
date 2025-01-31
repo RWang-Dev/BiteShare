@@ -37,6 +37,7 @@ import { removeCoupon } from "@/store/slices/couponFeed";
 interface CouponForFeedProps {
   couponDetails: any;
   idx: number;
+  type: string;
 }
 const CouponForFeed = (props: CouponForFeedProps) => {
   const dispatch = useAppDispatch();
@@ -50,6 +51,7 @@ const CouponForFeed = (props: CouponForFeedProps) => {
       const response = await axios.post(`${API_BASE_URL}/claimCoupon`, {
         uid: userid,
         couponid: couponid,
+        type: props.type,
       });
       if (response.data) {
         Alert.alert("Coupon claimed: ", props.couponDetails.id);

@@ -16,6 +16,7 @@ import CouponFeedItem from "./CouponFeedItem";
 // api
 import { API_BASE_URL } from "@/api.config";
 import axios from "axios";
+
 import { Timestamp } from "firebase/firestore";
 import CouponForFeed from "./FeedCouponItem";
 
@@ -114,7 +115,7 @@ const CouponFeedTest = () => {
         keyExtractor={(item) => (item as any).id.toString()}
         renderItem={({ item, index }) => (
           <CouponFeedItem id={index}>
-            <CouponForFeed couponDetails={item} idx={index} />
+            <CouponForFeed couponDetails={item} idx={index} type="default" />
           </CouponFeedItem>
         )}
         contentContainerStyle={styles.couponScroll}

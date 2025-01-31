@@ -143,11 +143,11 @@ const UserProfile = () => {
       ) : null}
 
       <View style={styles.profileHeader}>
-        {userType == "influencer" ? (
+        {/* {userType == "influencer" ? (
           <Pressable style={styles.addPostBtn} onPressOut={togglePostTab}>
             <Text>+</Text>
           </Pressable>
-        ) : null}
+        ) : null} */}
         <View style={styles.profileBorder}>
           {auth.currentUser && auth.currentUser.photoURL ? (
             <Image
@@ -176,11 +176,15 @@ const UserProfile = () => {
           <View style={styles.influencerStats}>
             <View style={styles.influencerFollowers}>
               <Text style={{ fontWeight: "bold" }}>4.8K</Text>
-              <Text style={{ fontWeight: "bold" }}>Followers</Text>
+              <Text style={{ fontWeight: "bold" }}>Shares</Text>
             </View>
             <View style={styles.influencerLikes}>
               <Text style={{ fontWeight: "bold" }}>36K</Text>
               <Text style={{ fontWeight: "bold" }}>Likes</Text>
+            </View>
+            <View style={styles.influencerLikes}>
+              <Text style={{ fontWeight: "bold" }}>36K</Text>
+              <Text style={{ fontWeight: "bold" }}>Redeems</Text>
             </View>
           </View>
         ) : null}
@@ -366,6 +370,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     margin: "2.5%",
+    gap: 50,
   },
   influencerFollowers: {
     marginHorizontal: "2.5%",

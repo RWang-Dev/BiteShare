@@ -75,10 +75,10 @@ app.get("/coupon", async (req: Request, res: Response) => {
     const { id } = req.query;
 
     const couponCollection = db.collection("coupons");
-    const couponData = await couponCollection.doc(id).get();
+    const coupon = await couponCollection.doc(id).get();
 
     res.status(200).json({
-      couponData: couponData,
+      couponData: coupon.data(),
       message: "Got coupon",
     });
     return;
@@ -95,8 +95,10 @@ app.get("/claimedCoupons", async (req: Request, res: Response) => {
     const userCollection = db.collection("users");
     const user = await userCollection.doc(uid).get();
 
-    const claimedCoupons = user.docs.claimedCoupons;
+    console.log(user);
+    const claimedCoupons = user.data().claimedCoupons;
 
+    console.log(claimedCoupons);
     res.status(200).json({
       coupons: claimedCoupons,
     });
@@ -211,7 +213,7 @@ app.patch("/users/updateUserType", async (req: Request, res: Response) => {
 // POST
 app.post("/claimCoupon", async (req: Request, res: Response) => {
   try {
-    const { uid, couponid } = req.body;
+    const { uid, couponid, type } = req.body;
     if (!uid || !couponid) {
       res.status(400).json({ message: "Missing required fields" });
       return;
