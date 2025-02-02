@@ -98,7 +98,9 @@ const CouponForFeed = (props: CouponForFeedProps) => {
       {/* Bottom Section */}
       <View style={styles.bottomSection}>
         <Pressable style={styles.redeemIcon} onPress={handlePress}>
-          <Text style={styles.redeemText}>Claim</Text>
+          <Text style={styles.redeemText}>
+            {props.type == "Claim" ? "Claim" : "Promote"}
+          </Text>
         </Pressable>
         {props.couponDetails.expiryDate
           ? renderExpireDate(props.couponDetails.expiryDate)
