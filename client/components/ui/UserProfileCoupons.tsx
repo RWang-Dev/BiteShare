@@ -37,11 +37,18 @@ import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
 
 const UserProfileCoupons = () => {
   const auth = getAuth(firebaseApp);
-  const [coupons, setCoupons] = useState([]);
+  const [couponsID, setCouponsID] = useState([]);
+  const [couponsData, setCouponsData] = useState([]);
 
   useEffect(() => {
     getClaimedCoupons();
   }, []);
+
+  useEffect(() => {
+    if (couponsID.length > 0) {
+      getCouponData();
+    }
+  }, [couponsID]);
 
   const getClaimedCoupons = async () => {
     try {
@@ -52,7 +59,8 @@ const UserProfileCoupons = () => {
       console.log(response.data);
 
       if (response.data.coupons) {
-        setCoupons(response.data.coupons);
+        setCouponsID(response.data.coupons);
+        console.log("PROFILE COUPONS: ", response.data.coupons);
       }
     } catch (error) {
       console.error(error);
@@ -60,10 +68,28 @@ const UserProfileCoupons = () => {
     return;
   };
 
+  const getCouponData = async () => {
+    let tempData = [];
+    for (let i = 0; i < couponsID.length; i++) {
+      const id = couponsID[i];
+      try {
+        const response = await axios.get(`${API_BASE_URL}/coupon/?id=${id}`);
+
+        if (response.data.couponData) {
+          tempData.push(response.data.couponData);
+        }
+      } catch (error) {
+        console.error("ERRORR GETTING COUPON Data: ", error);
+      }
+    }
+    setCouponsData(tempData as never);
+    return;
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.couponScrollHeader}>My Coupons</Text>
-      {coupons.length == 0 ? (
+      {couponsID.length == 0 ? (
         <View style={styles.emptyCoupons}>
           <Text style={{ fontWeight: "bold", fontSize: 18, color: "gray" }}>
             Nothing here
@@ -71,13 +97,8 @@ const UserProfileCoupons = () => {
         </View>
       ) : null}
       <ScrollView contentContainerStyle={styles.couponScroll}>
-        {coupons.map((coupon: any) => (
-          <CouponItem
-            key={coupon.id}
-            id={coupon.id}
-            item={coupon.id}
-            description={"BOGO basket 50% Off"}
-          />
+        {couponsData.map((data: any) => (
+          <CouponItem couponData={data} key={data.id} type={"redeem"} />
         ))}
       </ScrollView>
     </View>

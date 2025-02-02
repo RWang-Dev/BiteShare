@@ -38,6 +38,10 @@ import Profile from "../../assets/icons/Profile";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setTab, setUserType } from "@/store/slices/userProfile";
 import { setActive, setID } from "@/store/slices/couponRedemption";
+import {
+  setActive as setActivePost,
+  setMedia,
+} from "@/store/slices/influencerPost";
 
 // auth
 import {
@@ -53,11 +57,11 @@ const UserProfile = () => {
   const userType = useAppSelector((state) => state.userProfile.userType);
   const active = useAppSelector((state) => state.couponRedemption.active);
   const ID = useAppSelector((state) => state.couponRedemption.ID);
-  const [username, setUsername] = useState("");
-  const [profileImg, setProfileImg] = useState("");
+
+  const postActive = useAppSelector((state) => state.influencerPost.active);
+  const media = useAppSelector((state) => state.influencerPost.media);
+
   const auth = getAuth(firebaseApp);
-  const [postMedia, setPostMedia] = useState("");
-  const [postActive, setPostActive] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -79,33 +83,6 @@ const UserProfile = () => {
     } catch (error) {
       console.error("Error fetching user: ", error);
     }
-  };
-
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setPostMedia(result.assets[0].uri);
-      setPostActive(true);
-    }
-  };
-
-  const togglePostTab = async () => {
-    await pickImage();
-    alert("Post tab");
-    return;
   };
 
   const TABS = {
@@ -136,18 +113,13 @@ const UserProfile = () => {
           <CouponRedemptionPopup id={ID} />
         </View>
       ) : null}
-      {postActive ? (
-        <View style={styles.influencerPostPopup}>
-          <InfluencerPost />
-        </View>
-      ) : null}
 
       <View style={styles.profileHeader}>
-        {/* {userType == "influencer" ? (
-          <Pressable style={styles.addPostBtn} onPressOut={togglePostTab}>
-            <Text>+</Text>
-          </Pressable>
-        ) : null} */}
+        {postActive ? (
+          <View style={styles.influencerPostPopup}>
+            <InfluencerPost />
+          </View>
+        ) : null}
         <View style={styles.profileBorder}>
           {auth.currentUser && auth.currentUser.photoURL ? (
             <Image

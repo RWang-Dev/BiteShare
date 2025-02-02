@@ -15,27 +15,81 @@ import {
 import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
+import * as ImagePicker from "expo-image-picker";
 
 // icons
 import RightArrow from "../../assets/icons/RightArrow";
 
 // Redux
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { setActive, setID } from "@/store/slices/couponRedemption";
+import {
+  setActive as setActivePost,
+  setMedia,
+} from "@/store/slices/influencerPost";
+import {
+  setActive as setActiveRedeem,
+  setID,
+} from "@/store/slices/couponRedemption";
 
 interface CouponItemProps {
-  item: string;
-  description: string;
-  id: number;
+  couponData: any;
+  type: string;
 }
 const CouponItem = (props: CouponItemProps) => {
   const active = useAppSelector((state) => state.couponRedemption.active);
   const ID = useAppSelector((state) => state.couponRedemption.ID);
   const dispatch = useAppDispatch();
 
+  const postActive = useAppSelector((state) => state.influencerPost.active);
+  const media = useAppSelector((state) => state.influencerPost.media);
+
+  useEffect(() => {
+    console.log("PROPS TYPE: ", props.type);
+  }, []);
+
   const redeemCoupon = (key: number) => {
-    dispatch(setActive(true));
+    dispatch(setActiveRedeem(true));
     dispatch(setID(key));
+  };
+
+  const renderExpireDate = (timestamp: {
+    _nanoseconds: number;
+    _seconds: number;
+  }) => {
+    const date = new Date(timestamp._seconds * 1000);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    return <Text style={styles.expirationText}>Expires {formattedDate}</Text>;
+  };
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      dispatch(setMedia(result.assets[0].uri));
+      dispatch(setActivePost(true));
+    }
+  };
+
+  const togglePostTab = async () => {
+    await pickImage();
+    alert("Post tab");
+    return;
   };
 
   return (
@@ -59,10 +113,19 @@ const CouponItem = (props: CouponItemProps) => {
 
       {/* Bottom Section */}
       <View style={styles.bottomSection}>
-        <Pressable style={styles.redeemIcon}>
-          <Text style={styles.redeemText}>Claim</Text>
+        <Pressable
+          style={styles.redeemIcon}
+          onPressOut={
+            props.type == "redeem" ? () => redeemCoupon(0) : togglePostTab
+          }
+        >
+          <Text style={styles.redeemText}>
+            {props.type == "redeem" ? "Redeem" : "Promote"}
+          </Text>
         </Pressable>
-        <Text style={styles.expirationText}>Expires 01/31/2025</Text>
+        {props.couponData.expiryDate
+          ? renderExpireDate(props.couponData.expiryDate)
+          : renderExpireDate(props.couponData.validUntil)}
       </View>
     </View>
   );
@@ -129,7 +192,7 @@ const styles = StyleSheet.create({
   },
   expirationText: {
     marginRight: "10%",
-    fontSize: 18,
+    fontSize: 12,
   },
 });
 
