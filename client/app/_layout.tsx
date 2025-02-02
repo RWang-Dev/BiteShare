@@ -16,6 +16,9 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Provider } from "react-redux";
 import { Auth0Provider } from "react-native-auth0";
 import { store } from "../store/store";
+import { LogBox } from "react-native";
+
+LogBox.ignoreAllLogs();
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +39,8 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+
+  Error.stackTraceLimit = 2; // Limits the number of stack frames shown
 
   return (
     <Provider store={store}>

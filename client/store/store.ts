@@ -6,6 +6,8 @@ import couponMapReducer from "./slices/couponMap";
 import userProfileReducer from "./slices/userProfile";
 import couponRedemptionReducer from "./slices/couponRedemption";
 import userAuthReducer from "./slices/userAuth";
+import couponFeedReducer from "./slices/couponFeed";
+import influencerPostReducer from "./slices/influencerPost";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ export const store = configureStore({
     userProfile: userProfileReducer,
     couponRedemption: couponRedemptionReducer,
     userAuth: userAuthReducer,
+    couponFeed: couponFeedReducer,
+    influencerPost: influencerPostReducer,
   },
 });
 

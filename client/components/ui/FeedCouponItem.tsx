@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Pressable,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -15,46 +16,56 @@ import {
 import { Link } from "expo-router";
 import Svg, { Path } from "react-native-svg";
 import CommentItem from "./CommentItem";
-import * as ImagePicker from "expo-image-picker";
+import { Timestamp } from "firebase/firestore";
 
-// icons
-import RightArrow from "../../assets/icons/RightArrow";
+// server
+import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
 
-// Redux
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
+// auth
 import {
-  setActive as setActivePost,
-  setMedia,
-} from "@/store/slices/influencerPost";
-import {
-  setActive as setActiveRedeem,
-  setID,
-} from "@/store/slices/couponRedemption";
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
 
-interface CouponItemProps {
-  couponData: any;
+// redux
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { removeCoupon } from "@/store/slices/couponFeed";
+
+interface CouponForFeedProps {
+  couponDetails: any;
+  idx: number;
   type: string;
 }
-const CouponItem = (props: CouponItemProps) => {
-  const active = useAppSelector((state) => state.couponRedemption.active);
-  const ID = useAppSelector((state) => state.couponRedemption.ID);
+const CouponForFeed = (props: CouponForFeedProps) => {
   const dispatch = useAppDispatch();
+  const auth = getAuth(firebaseApp);
 
-  const postActive = useAppSelector((state) => state.influencerPost.active);
-  const media = useAppSelector((state) => state.influencerPost.media);
+  const handlePress = async () => {
+    const couponid = props.couponDetails.id;
+    const userid = auth.currentUser!.uid;
 
-  useEffect(() => {
-    console.log("PROPS TYPE: ", props.type);
-  }, []);
-
-  const redeemCoupon = (key: number) => {
-    dispatch(setActiveRedeem(true));
-    dispatch(setID(key));
+    try {
+      const response = await axios.post(`${API_BASE_URL}/claimCoupon`, {
+        uid: userid,
+        couponid: couponid,
+        type: props.type,
+      });
+      if (response.data) {
+        Alert.alert("Coupon claimed: ", props.couponDetails.id);
+        dispatch(removeCoupon(props.idx));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return;
   };
 
   const renderExpireDate = (timestamp: {
-    _nanoseconds: number;
     _seconds: number;
+    _nanoseconds: number;
   }) => {
     const date = new Date(timestamp._seconds * 1000);
     const formattedDate = date.toLocaleDateString("en-US", {
@@ -63,33 +74,6 @@ const CouponItem = (props: CouponItemProps) => {
       year: "numeric",
     });
     return <Text style={styles.expirationText}>Expires {formattedDate}</Text>;
-  };
-
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      dispatch(setMedia(result.assets[0].uri));
-      dispatch(setActivePost(true));
-    }
-  };
-
-  const togglePostTab = async () => {
-    await pickImage();
-    alert("Post tab");
-    return;
   };
 
   return (
@@ -113,19 +97,14 @@ const CouponItem = (props: CouponItemProps) => {
 
       {/* Bottom Section */}
       <View style={styles.bottomSection}>
-        <Pressable
-          style={styles.redeemIcon}
-          onPressOut={
-            props.type == "redeem" ? () => redeemCoupon(0) : togglePostTab
-          }
-        >
+        <Pressable style={styles.redeemIcon} onPress={handlePress}>
           <Text style={styles.redeemText}>
-            {props.type == "redeem" ? "Redeem" : "Promote"}
+            {props.type == "Claim" ? "Claim" : "Promote"}
           </Text>
         </Pressable>
-        {props.couponData.expiryDate
-          ? renderExpireDate(props.couponData.expiryDate)
-          : renderExpireDate(props.couponData.validUntil)}
+        {props.couponDetails.expiryDate
+          ? renderExpireDate(props.couponDetails.expiryDate)
+          : renderExpireDate(props.couponDetails.validUntil)}
       </View>
     </View>
   );
@@ -134,24 +113,25 @@ const CouponItem = (props: CouponItemProps) => {
 const styles = StyleSheet.create({
   main: {
     backgroundColor: "#FFF3E2",
-    width: vw("92.5%"),
+    width: vw("100%"),
     height: vh("15%"),
-    borderRadius: 15,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     position: "relative",
+    // overflow: 'hidden',
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
     shadowColor: "#E7630A",
     shadowOpacity: 0.75,
     shadowOffset: { width: 0, height: 2 },
+    marginBottom: "2.5%",
   },
   topSection: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f3b944",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     flex: 1.25,
   },
   bottomSection: {
@@ -192,8 +172,8 @@ const styles = StyleSheet.create({
   },
   expirationText: {
     marginRight: "10%",
-    fontSize: 12,
+    fontSize: 18,
   },
 });
 
-export default CouponItem;
+export default CouponForFeed;

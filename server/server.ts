@@ -70,6 +70,102 @@ app.get("/test-db", async (req: Request, res: Response) => {
   }
 });
 
+app.get("/coupon", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.query;
+
+    const couponCollection = db.collection("coupons");
+    const coupon = await couponCollection.doc(id).get();
+
+    res.status(200).json({
+      couponData: coupon.data(),
+      message: "Got coupon",
+    });
+    return;
+  } catch (error) {
+    console.error(error);
+  }
+  return;
+});
+
+app.get("/claimedCoupons", async (req: Request, res: Response) => {
+  try {
+    const { uid } = req.query;
+
+    const userCollection = db.collection("users");
+    const user = await userCollection.doc(uid).get();
+
+    console.log(user);
+    const claimedCoupons = user.data().claimedCoupons;
+
+    console.log(claimedCoupons);
+    res.status(200).json({
+      coupons: claimedCoupons,
+    });
+    return;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "failed getting claimed coupons",
+    });
+  }
+  return;
+});
+
+app.get("/coupons", async (req: Request, res: Response) => {
+  try {
+    const { uid, limit = 10, lastVisible } = req.query;
+    const limitInt = parseInt(limit as string, 10);
+
+    const userDoc = await db
+      .collection("users")
+      .doc(uid as string)
+      .get();
+    const userData = userDoc.data();
+    const claimedCoupons = userData?.claimedCoupons || [];
+    console.log(claimedCoupons);
+
+    let query = db.collection("coupons").orderBy("createdAt").limit(limitInt);
+
+    if (lastVisible && lastVisible !== "null") {
+      const parsedLastVisible = JSON.parse(lastVisible as string);
+      const lastVisibleTimestamp = new admin.firestore.Timestamp(
+        parsedLastVisible._seconds,
+        parsedLastVisible._nanoseconds
+      );
+      console.log("PARSED: ", lastVisibleTimestamp);
+      query = db
+        .collection("coupons")
+        .orderBy("createdAt")
+        .startAfter(lastVisibleTimestamp)
+        .limit(limitInt);
+    }
+    const snapshot = await query.get();
+
+    const coupons = snapshot.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data(),
+      claimed: claimedCoupons.includes(doc.id),
+    }));
+
+    let newLastVisible = null;
+    if (coupons.length > 0) {
+      newLastVisible = JSON.stringify(coupons[coupons.length - 1].createdAt);
+    }
+
+    console.log("NEW LAST VISIBLE: ", newLastVisible);
+    console.log("UNCLAIMED COUPONS: ", coupons);
+    res.status(200).json({
+      coupons,
+      lastVisible: newLastVisible,
+    });
+  } catch (error) {
+    console.error("Firebase connection error: ", error);
+    res.status(500).json({ error: "Failed to fetch coupons" });
+  }
+  return;
+});
+
 app.get("/users/:uid", async (req: Request, res: Response) => {
   const { uid } = req.params;
 
@@ -93,7 +189,79 @@ app.get("/users/:uid", async (req: Request, res: Response) => {
   return;
 });
 
+// PATCH
+app.patch("/users/updateUserType", async (req: Request, res: Response) => {
+  try {
+    const { uid, newUserType } = req.body;
+    const userCollection = db.collection("users");
+    const userData: any = {
+      userType: newUserType,
+    };
+
+    await userCollection.doc(uid).set(userData, { merge: true });
+
+    res.status(201).json({
+      message: "User updated successfully",
+      uid,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  return;
+});
+
 // POST
+app.post("/claimCoupon", async (req: Request, res: Response) => {
+  try {
+    const { uid, couponid, type } = req.body;
+    if (!uid || !couponid) {
+      res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
+
+    const userRef = db.collection("users").doc(uid);
+    const couponRef = db.collection("coupons").doc(couponid); // Fix: Use couponid instead of uid
+
+    const userDoc = await userRef.get();
+    const userData = userDoc.exists ? userDoc.data() : { claimedCoupons: [] };
+
+    const couponDoc = await couponRef.get();
+    const couponData = couponDoc.exists
+      ? couponDoc.data()
+      : { usersClaimed: [] };
+
+    await userRef.set(
+      {
+        claimedCoupons: Array.isArray(userData.claimedCoupons)
+          ? [...userData.claimedCoupons, couponid]
+          : [couponid],
+      },
+      { merge: true }
+    );
+
+    await couponRef.set(
+      {
+        usersClaimed: Array.isArray(couponData.usersClaimed)
+          ? [...couponData.usersClaimed, uid]
+          : [uid],
+      },
+      { merge: true }
+    );
+
+    res.status(200).json({
+      message: "Coupon claimed successfully",
+    });
+    return;
+  } catch (error: any) {
+    console.error("Error claiming coupon:", error);
+    res.status(500).json({
+      message: "Error claiming coupon",
+      error: error.message,
+    });
+    return;
+  }
+});
+
 app.post(
   "/users/createProfile",
   upload.single("profileImage"),
@@ -104,6 +272,7 @@ app.post(
 
       if (!uid || !username) {
         res.status(400).json({ error: "UID and username are required" });
+        return;
       }
 
       let profileImageUrl = "";
@@ -147,6 +316,10 @@ app.post(
     return;
   }
 );
+
+// app.post("/influencers/posts", upload.single, async (req: Request, res: Response) => {
+
+// })
 
 // Start server
 app.listen(PORT, () => {

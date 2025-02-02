@@ -23,25 +23,83 @@ import CouponForFeed from "./FeedCouponItem";
 import DefaultUser from "../../assets/icons/DefaultUser";
 import Profile from "../../assets/icons/Profile";
 
-const UserProfileCoupons = () => {
-  const coupons = [];
+// api
+import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
 
-  for (let i = 0; i < 5; i++) {
-    coupons.push(
-      <CouponItem
-        key={i}
-        id={i}
-        item={"Chicken Wings " + i}
-        description={"BOGO basket 50% Off"}
-      />
-    );
-  }
+// auth
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
+
+const UserProfileCoupons = () => {
+  const auth = getAuth(firebaseApp);
+  const [couponsID, setCouponsID] = useState([]);
+  const [couponsData, setCouponsData] = useState([]);
+
+  useEffect(() => {
+    getClaimedCoupons();
+  }, []);
+
+  useEffect(() => {
+    if (couponsID.length > 0) {
+      getCouponData();
+    }
+  }, [couponsID]);
+
+  const getClaimedCoupons = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/claimedCoupons/?uid=${auth.currentUser!.uid}`
+      );
+
+      console.log(response.data);
+
+      if (response.data.coupons) {
+        setCouponsID(response.data.coupons);
+        console.log("PROFILE COUPONS: ", response.data.coupons);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return;
+  };
+
+  const getCouponData = async () => {
+    let tempData = [];
+    for (let i = 0; i < couponsID.length; i++) {
+      const id = couponsID[i];
+      try {
+        const response = await axios.get(`${API_BASE_URL}/coupon/?id=${id}`);
+
+        if (response.data.couponData) {
+          tempData.push(response.data.couponData);
+        }
+      } catch (error) {
+        console.error("ERRORR GETTING COUPON Data: ", error);
+      }
+    }
+    setCouponsData(tempData as never);
+    return;
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.couponScrollHeader}>My Coupons</Text>
-
+      {couponsID.length == 0 ? (
+        <View style={styles.emptyCoupons}>
+          <Text style={{ fontWeight: "bold", fontSize: 18, color: "gray" }}>
+            Nothing here
+          </Text>
+        </View>
+      ) : null}
       <ScrollView contentContainerStyle={styles.couponScroll}>
-        {coupons.map((coupon) => coupon)}
+        {couponsData.map((data: any) => (
+          <CouponItem couponData={data} key={data.id} type={"redeem"} />
+        ))}
       </ScrollView>
     </View>
   );
@@ -62,6 +120,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
+  },
+  emptyCoupons: {
+    width: 150,
+    position: "absolute",
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    top: "30%",
+    left: "50%",
+    marginLeft: -75,
   },
 });
 export default UserProfileCoupons;

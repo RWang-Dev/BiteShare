@@ -11,11 +11,28 @@ import BackButton from "../assets/icons/BackButton";
 
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUsername } from "@/store/slices/influencerApplication";
+import { setUserType } from "@/store/slices/userProfile";
+
+// server
+import { API_BASE_URL } from "@/api.config";
+import axios from "axios";
+
+// auth
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { firebaseApp, firebaseConfig } from "@/firebaseConfig";
 
 const InfluencerApplication = () => {
   const username = useAppSelector(
     (state) => state.influencerApplication.username
   );
+  const auth = getAuth(firebaseApp);
+
+  const userType = useAppSelector((state) => state.userProfile.userType);
+
   const dispatch = useAppDispatch();
 
   const handleChange = (text: string) => {
@@ -26,11 +43,30 @@ const InfluencerApplication = () => {
     dispatch(setUsername(text));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("Submitting username:", username, "for verification!");
 
-    router.back();
+    try {
+      if (!auth.currentUser) {
+        console.log("User not authenticated");
+        return;
+      }
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/updateUserType`,
+        { uid: auth.currentUser.uid, newUserType: "influencer" }
+      );
+      if (response.data) {
+        console.log("Successfully verified user");
+        dispatch(setUserType("influencer"));
+        router.back();
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+    return;
   };
+
   return (
     <View style={{ flex: 1 }}>
       <Pressable style={styles.back_button} onPressOut={() => router.back()}>
